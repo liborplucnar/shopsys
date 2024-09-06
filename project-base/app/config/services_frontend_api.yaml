@@ -36,12 +36,6 @@ services:
             $brandsBatchLoader: '@brands_batch_loader'
             $productsSellableCountByIdsBatchLoader: '@products_sellable_count_by_ids_batch_loader'
 
-    App\FrontendApi\Resolver\Store\StoreAvailabilityResolverMap:
-        arguments:
-            $storesBatchLoader: '@stores_batch_loader'
-        tags:
-            - { name: overblog_graphql.resolver_map, schema: default }
-
     Shopsys\FrontendApiBundle\Model\Category\CategoryFacade:
         alias: App\FrontendApi\Model\Category\CategoryFacade
 
@@ -103,3 +97,9 @@ services:
 
     Shopsys\FrontendApiBundle\Model\Resolver\Products\ProductResolverMap:
         alias: App\FrontendApi\Resolver\Products\ProductResolverMap
+
+    Shopsys\FrontendApiBundle\Model\Resolver\Store\StoreAvailabilityResolverMap:
+        arguments:
+            $storesBatchLoader: '@stores_batch_loader'
+        tags:
+            - { name: overblog_graphql.resolver_map, schema: default }
