@@ -459,7 +459,7 @@ export type TypeCart = {
   /** Selected bank swift code of goPay payment bank transfer */
   paymentGoPayBankSwift: Maybe<Scalars['String']['output']>;
   /** Applied promo code if provided */
-  promoCode: Maybe<Scalars['String']['output']>;
+  promoCodes: Array<TypePromoCode>;
   /** Remaining amount for free transport and payment; null = transport cannot be free */
   remainingAmountWithVatForFreeTransport: Maybe<Scalars['Money']['output']>;
   /** Rounding amount if payment has rounding allowed */
@@ -2386,6 +2386,22 @@ export enum TypeProductTypeEnum {
   Basic = 'BASIC',
   /** Product with inquiry form instead of add to cart button */
   Inquiry = 'INQUIRY'
+}
+
+export type TypePromoCode = {
+  __typename?: 'PromoCode';
+  /** The promo code code */
+  code: Scalars['String']['output'];
+  /** The promo code discount */
+  discount: TypePrice;
+  /** The promo code type */
+  type: TypePromoCodeTypeEnum;
+};
+
+/** One of the possible types of the promoo code */
+export enum TypePromoCodeTypeEnum {
+  Nominal = 'nominal',
+  Percent = 'percent'
 }
 
 export type TypeQuery = {

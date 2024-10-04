@@ -91,6 +91,7 @@
     * [ProductFilterOptions](#productfilteroptions)
     * [ProductList](#productlist)
     * [ProductPrice](#productprice)
+    * [PromoCode](#promocode)
     * [RegularCustomerUser](#regularcustomeruser)
     * [RegularProduct](#regularproduct)
     * [SalesRepresentative](#salesrepresentative)
@@ -153,6 +154,7 @@
     * [ProductListTypeEnum](#productlisttypeenum)
     * [ProductOrderingModeEnum](#productorderingmodeenum)
     * [ProductTypeEnum](#producttypeenum)
+    * [PromoCodeTypeEnum](#promocodetypeenum)
     * [RecommendationType](#recommendationtype)
     * [StoreOpeningStatusEnum](#storeopeningstatusenum)
     * [TransportTypeEnum](#transporttypeenum)
@@ -3153,8 +3155,8 @@ Selected bank swift code of goPay payment bank transfer
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>promoCode</strong></td>
-<td valign="top"><a href="#string">String</a></td>
+<td colspan="2" valign="top"><strong>promoCodes</strong></td>
+<td valign="top">[<a href="#promocode">PromoCode</a>!]!</td>
 <td>
 
 Applied promo code if provided
@@ -7637,6 +7639,48 @@ Total value of VAT
 </tbody>
 </table>
 
+### PromoCode
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>code</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The promo code code
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>discount</strong></td>
+<td valign="top"><a href="#price">Price</a>!</td>
+<td>
+
+The promo code discount
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>type</strong></td>
+<td valign="top"><a href="#promocodetypeenum">PromoCodeTypeEnum</a>!</td>
+<td>
+
+The promo code type
+
+</td>
+</tr>
+</tbody>
+</table>
+
 ### RegularCustomerUser
 
 Represents an currently logged customer user
@@ -11789,6 +11833,27 @@ Basic product
 Product with inquiry form instead of add to cart button
 
 </td>
+</tr>
+</tbody>
+</table>
+
+### PromoCodeTypeEnum
+
+One of the possible types of the promoo code
+
+<table>
+<thead>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</thead>
+<tbody>
+<tr>
+<td valign="top"><strong>nominal</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>percent</strong></td>
+<td></td>
 </tr>
 </tbody>
 </table>
