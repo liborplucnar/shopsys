@@ -2341,8 +2341,14 @@ export type TypePromoCode = {
   /** The promo code discount */
   discount: TypePrice;
   /** The promo code type */
-  type: Scalars['String']['output'];
+  type: TypePromoCodeTypeEnum;
 };
+
+/** One of the possible types of the promoo code */
+export enum TypePromoCodeTypeEnum {
+  Nominal = 'nominal',
+  Percent = 'percent'
+}
 
 export type TypeQuery = {
   __typename?: 'Query';
