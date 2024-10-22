@@ -6,8 +6,16 @@ services:
 
     Shopsys\AdministrationBundle\:
         exclude: '../../{Command,Controller,DependencyInjection,Form,Migrations,Resources,Twig}'
-        resource: '../../**/*{Enum,Facade,Factory,Repository,Transformer}.php'
+        resource: '../../**/*{Enum,Facade,Factory,Provider,Repository,Transformer}.php'
 
-    Shopsys\AdministrationBundle\Controller\:
-        resource: '../../Controller/'
-        tags: ['controller.service_arguments']
+    Shopsys\AdministrationBundle\Component\Registry\CrudControllerDefinitionRegistry:
+        arguments:
+            - '@Shopsys\FrameworkBundle\Component\EntityExtension\EntityNameResolver'
+            - '@service_container'
+            - '%shopsys.admin.crud_controllers%'
+
+    Shopsys\AdministrationBundle\Component\Router\CrudControllerRouteLoader:
+        arguments:
+            - '@Shopsys\AdministrationBundle\Component\Registry\CrudControllerDefinitionRegistry'
+        tags:
+            - { name: routing.loader }
