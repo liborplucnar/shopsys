@@ -125,7 +125,8 @@ jobs:
             (
                 github.event.pull_request.head.repo.full_name == 'shopsys/shopsys' ||
                 github.ref_protected == true
-            )
+            ) &&
+            needs.variables.outputs.DOCKER_PHP_FPM_REPOSITORY_TAG != ''
         name: Build PHP-FPM image
         runs-on: ubuntu-22.04
         needs: variables
@@ -133,6 +134,13 @@ jobs:
             contents: read
             packages: write
         steps:
+            -   name: Cache Docker layers
+                uses: actions/cache@v3
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-docker-php-fpm-${{ hashFiles('project-base/app/docker/php-fpm/Dockerfile') }}-${{ hashFiles('composer.json') }}
+                    restore-keys: |
+                        ${{ runner.os }}-docker-php-fpm-
             -   name: GIT checkout branch - ${{ github.ref }}
                 uses: actions/checkout@v4
                 with:
@@ -143,6 +151,16 @@ jobs:
                     registry: ghcr.io
                     username: ${{ github.actor }}
                     password: ${{ secrets.GITHUB_TOKEN }}
+            -   name: Check if PHP-FPM image needs to be built
+                run: |
+                    IMAGE_EXISTS=$(docker pull "${{ needs.variables.outputs.DOCKER_PHP_FPM_REPOSITORY_TAG }}" 2>&1 || echo "0")
+                    if [[ "$IMAGE_EXISTS" == *"manifest unknown"* ]]; then
+                        echo "Image does not exist."
+                        echo "IMAGE_EXISTS=false" >> $GITHUB_ENV
+                    else
+                        echo "Image exists."
+                        echo "IMAGE_EXISTS=true" >> $GITHUB_ENV
+                    fi
             -   name: Build custom base image if requested
                 if: "contains(github.event.pull_request.labels.*.name, 'Use PHP Dockerfile instead of built image')"
                 run: |
@@ -150,7 +168,7 @@ jobs:
                     docker build --tag ${TAG} --no-cache --compress -f ./packages/php-image/Dockerfile ./packages/php-image
             -   name: Create branch specific PHP-FPM image with project files
                 run: |
-                    .github/build-php-fpm-image.sh "${{ needs.variables.outputs.DOCKER_PHP_FPM_REPOSITORY_TAG }}" ci
+                    .github/build-php-fpm-image.sh "${{ needs.variables.outputs.DOCKER_PHP_FPM_REPOSITORY_TAG }}" "ci" "${{ env.IMAGE_EXISTS }}"
                     docker image push "${{ needs.variables.outputs.DOCKER_PHP_FPM_REPOSITORY_TAG }}"
     build-storefront-image:
         if: |
@@ -165,6 +183,13 @@ jobs:
             contents: read
             packages: write
         steps:
+            -   name: Cache Docker layers
+                uses: actions/cache@v3
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-docker-storefront-${{ hashFiles('project-base/storefront/docker/Dockerfile') }}-${{ hashFiles('project-base/storefront/package.json') }}
+                    restore-keys: |
+                        ${{ runner.os }}-docker-storefront-
             -   name: GIT checkout branch - ${{ github.ref }}
                 uses: actions/checkout@v4
                 with:
@@ -175,9 +200,19 @@ jobs:
                     registry: ghcr.io
                     username: ${{ github.actor }}
                     password: ${{ secrets.GITHUB_TOKEN }}
+            -   name: Check if Storefront image needs to be built
+                run: |
+                    IMAGE_EXISTS=$(docker pull ${{ needs.variables.outputs.DOCKER_STOREFRONT_REPOSITORY_TAG }} 2>&1 || echo "0")
+                    if [[ "$IMAGE_EXISTS" == *"manifest unknown"* ]]; then
+                        echo "Image does not exist."
+                        echo "IMAGE_EXISTS=false" >> $GITHUB_ENV
+                    else
+                        echo "Image exists."
+                        echo "IMAGE_EXISTS=true" >> $GITHUB_ENV
+                    fi
             -   name: Build Storefront image and push it to GitHub Container Registry
                 run: |
-                    .github/build-storefront-image.sh ${{ needs.variables.outputs.DOCKER_STOREFRONT_REPOSITORY_TAG }}
+                    .github/build-storefront-image.sh ${{ needs.variables.outputs.DOCKER_STOREFRONT_REPOSITORY_TAG }} "${{ env.IMAGE_EXISTS }}"
                     docker image push ${{ needs.variables.outputs.DOCKER_STOREFRONT_REPOSITORY_TAG }}
     build-storefront-ci-image:
         if: |
@@ -194,6 +229,13 @@ jobs:
             contents: read
             packages: write
         steps:
+            -   name: Cache Docker layers
+                uses: actions/cache@v3
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-docker-storefront-ci-${{ hashFiles('project-base/storefront/docker/Dockerfile') }}-${{ hashFiles('project-base/storefront/package.json') }}
+                    restore-keys: |
+                        ${{ runner.os }}-docker-storefront-ci-
             -   name: GIT checkout branch - ${{ github.ref }}
                 uses: actions/checkout@v4
                 with:
@@ -204,9 +246,19 @@ jobs:
                     registry: ghcr.io
                     username: ${{ github.actor }}
                     password: ${{ secrets.GITHUB_TOKEN }}
+            -   name: Check if Storefront CI image needs to be built
+                run: |
+                    IMAGE_EXISTS=$(docker pull ${{ needs.variables.outputs.DOCKER_STOREFRONT_CI_REPOSITORY_TAG }} 2>&1 || echo "0")
+                    if [[ "$IMAGE_EXISTS" == *"manifest unknown"* ]]; then
+                        echo "Image does not exist."
+                        echo "IMAGE_EXISTS=false" >> $GITHUB_ENV
+                    else
+                        echo "Image exists."
+                        echo "IMAGE_EXISTS=true" >> $GITHUB_ENV
+                    fi
             -   name: Build Storefront CI image and push it to GitHub Container Registry
                 run: |
-                    .github/build-storefront-ci-image.sh ${{ needs.variables.outputs.DOCKER_STOREFRONT_CI_REPOSITORY_TAG }}
+                    .github/build-storefront-ci-image.sh ${{ needs.variables.outputs.DOCKER_STOREFRONT_CI_REPOSITORY_TAG }} "${{ env.IMAGE_EXISTS }}"
                     docker image push ${{ needs.variables.outputs.DOCKER_STOREFRONT_CI_REPOSITORY_TAG }}
     build-elasticsearch-image:
         if: |
@@ -222,6 +274,13 @@ jobs:
             contents: read
             packages: write
         steps:
+            -   name: Cache Docker layers
+                uses: actions/cache@v3
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-docker-elasticsearch-${{ hashFiles('project-base/app/docker/elasticsearch/Dockerfile') }}
+                    restore-keys: |
+                        ${{ runner.os }}-docker-elasticsearch-
             -   name: GIT checkout branch - ${{ github.ref }}
                 uses: actions/checkout@v4
                 with:
@@ -232,9 +291,19 @@ jobs:
                     registry: ghcr.io
                     username: ${{ github.actor }}
                     password: ${{ secrets.GITHUB_TOKEN }}
+            -   name: Check if Elasticsearch image needs to be built
+                run: |
+                    IMAGE_EXISTS=$(docker pull ${{ needs.variables.outputs.DOCKER_ELASTICSEARCH_REPOSITORY_TAG }} 2>&1 || echo "0")
+                    if [[ "$IMAGE_EXISTS" == *"manifest unknown"* ]]; then
+                        echo "Image does not exist."
+                        echo "IMAGE_EXISTS=false" >> $GITHUB_ENV
+                    else
+                        echo "Image exists."
+                        echo "IMAGE_EXISTS=true" >> $GITHUB_ENV
+                    fi
             -   name: Build Elasticsearch image and push it to GitHub Container Registry
                 run: |
-                    .github/build-elasticsearch-image.sh ${{ needs.variables.outputs.DOCKER_ELASTICSEARCH_REPOSITORY_TAG }}
+                    .github/build-elasticsearch-image.sh ${{ needs.variables.outputs.DOCKER_ELASTICSEARCH_REPOSITORY_TAG }} "${{ env.IMAGE_EXISTS }}"
                     docker image push ${{ needs.variables.outputs.DOCKER_ELASTICSEARCH_REPOSITORY_TAG }}
     standards:
         name: Check standards
@@ -358,6 +427,8 @@ jobs:
                 uses: actions/download-artifact@v4
                 with:
                     name: docker-compose
+            -   name: Pull Docker images
+                run: docker compose pull --parallel postgres webserver elasticsearch redis php-fpm
             -   name: Build application
                 run: |
                     docker compose pull --parallel postgres webserver elasticsearch redis php-fpm
