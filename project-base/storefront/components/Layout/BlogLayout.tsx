@@ -13,6 +13,7 @@ export const BlogLayout: FC<BlogLayoutProps> = ({ children, activeCategoryUuid }
 
     return (
         <Webline>
+            <div>test div</div>
             <div className="scroll-mt-5" ref={paginationScrollTargetRef}>
                 <div className="mb-16 flex flex-col vl:flex-row">
                     <div className="order-2 mb-16 flex w-full flex-col vl:order-1 vl:w-7/12 vl:flex-1 xl:w-2/3">
