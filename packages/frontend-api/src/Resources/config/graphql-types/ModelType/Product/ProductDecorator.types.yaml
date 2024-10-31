@@ -74,3 +74,5 @@ ProductDecorator:
                 resolve: '@=query("filesByProductPromiseQuery", value)'
             isVisible:
                 type: "Boolean!"
+            vat:
+                type: "Vat!"

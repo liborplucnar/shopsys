@@ -45,6 +45,7 @@ use Shopsys\FrontendApiBundle\Model\Resolver\Products\DataMapper\ProductEntityFi
  * @method bool isVisible(\App\Model\Product\Product $product)
  * @method \GraphQL\Executor\Promise\Promise getVariants(\App\Model\Product\Product $product)
  * @method \GraphQL\Executor\Promise\Promise getVariantsCount(\App\Model\Product\Product $product)
+ * @method \Shopsys\FrameworkBundle\Model\Pricing\Vat\Vat getVat(\App\Model\Product\Product $product)
  */
 class ProductEntityFieldMapper extends BaseProductEntityFieldMapper
 {

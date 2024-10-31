@@ -185,6 +185,7 @@ class ProductExportRepository
             ProductExportFieldProvider::SEO_META_DESCRIPTION => $product->getSeoMetaDescription($domainId),
             ProductExportFieldProvider::ACCESSORIES => $this->extractAccessoriesIds($product),
             ProductExportFieldProvider::HREFLANG_LINKS => $this->hreflangLinksFacade->getForProduct($product, $domainId),
+            ProductExportFieldProvider::VAT => $this->extractVat($product, $domainId),
             default => throw new InvalidArgumentException(sprintf('There is no definition for exporting "%s" field to Elasticsearch', $field)),
         };
     }
@@ -443,5 +444,17 @@ class ProductExportRepository
     protected function reset(): void
     {
         $this->inMemoryCache->deleteAllItemsInNamespace(static::VARIANTS_CACHE_NAMESPACE);
+    }
+
+    /**
+     * @param \Shopsys\FrameworkBundle\Model\Product\Product $product
+     * @param int $domainId
+     * @return array
+     */
+    protected function extractVat(Product $product, int $domainId): array
+    {
+        return [
+            'percent' => $product->getVatForDomain($domainId)->getPercent(),
+        ];
     }
 }

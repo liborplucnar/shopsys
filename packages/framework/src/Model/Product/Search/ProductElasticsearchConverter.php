@@ -53,6 +53,8 @@ class ProductElasticsearchConverter
         $result['seo_meta_description'] = $product['seo_meta_description'] ?? null;
         $result['hreflang_links'] = $product['hreflang_links'] ?? [];
 
+        $result['vat'] = $product['vat'] ?? ['percent' => '0'];
+
         return $result;
     }
 
