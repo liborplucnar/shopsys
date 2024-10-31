@@ -358,6 +358,12 @@ class Order
     protected $customer;
 
     /**
+     * @var string
+     * @ORM\Column(type="guid", unique=true, nullable=true)
+     */
+    protected $convertimUuid;
+
+    /**
      * @param \Shopsys\FrameworkBundle\Model\Order\OrderData $orderData
      * @param string $orderNumber
      * @param string $urlHash
@@ -398,6 +404,7 @@ class Order
         $this->paymentTransactions = new ArrayCollection();
         $this->goPayBankSwift = $orderData->goPayBankSwift;
         $this->pickupPlaceIdentifier = $orderData->pickupPlaceIdentifier;
+        $this->convertimUuid = $orderData->convertimUuid;
     }
 
     /**
@@ -1241,5 +1248,13 @@ class Order
     public function isCompanyCustomer(): bool
     {
         return $this->getCompanyName() !== null && $this->getCompanyNumber() !== null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConvertimUuid()
+    {
+        return $this->convertimUuid;
     }
 }
