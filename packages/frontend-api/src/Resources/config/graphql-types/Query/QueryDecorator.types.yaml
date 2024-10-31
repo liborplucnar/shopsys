@@ -308,3 +308,17 @@ QueryDecorator:
                 resolve: "@=query('complaintsQuery', args)"
                 complexity: "@=dynamicPaginationComplexity(args)"
                 description: "Returns list of complaints that can be paginated using `first`, `last`, `before` and `after` keywords"
+            isCompanyRegisteredQuery:
+                type: Boolean!
+                args:
+                    companyNumber:
+                        type: String!
+                        validation:
+                            -   Length:
+                                    max: 50
+                                    maxMessage: "Identification number cannot be longer than {{ limit }} characters"
+                            -   Regex:
+                                    pattern: '/^[0-9]+$/'
+                                    message: "Please fill in numbers only"
+                resolve: "@=query('isCompanyRegisteredQuery', args['companyNumber'])"
+                description: "Check if company is registered by company number"
