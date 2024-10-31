@@ -253,6 +253,11 @@ class OrderData
      */
     public $password;
 
+    /**
+     * @var string|null
+     */
+    public $convertimUuid;
+
     public function __construct()
     {
         $this->deliveryAddressSameAsBillingAddress = false;
