@@ -1273,6 +1273,7 @@ export type TypeMainVariant = TypeBreadcrumb & TypeHreflang & TypeProduct & Type
   variants: Array<TypeVariant>;
   /** Number of sellable variants */
   variantsCount: Scalars['Int']['output'];
+  vat: TypeVat;
 };
 
 
@@ -2072,6 +2073,7 @@ export type TypePayment = {
   type: Scalars['String']['output'];
   /** UUID */
   uuid: Scalars['Uuid']['output'];
+  vat: TypeVat;
 };
 
 
@@ -2230,6 +2232,7 @@ export type TypeProduct = {
   usps: Array<Scalars['String']['output']>;
   /** UUID */
   uuid: Scalars['Uuid']['output'];
+  vat: TypeVat;
 };
 
 
@@ -2984,6 +2987,7 @@ export type TypeRegularProduct = TypeBreadcrumb & TypeHreflang & TypeProduct & T
   usps: Array<Scalars['String']['output']>;
   /** UUID */
   uuid: Scalars['Uuid']['output'];
+  vat: TypeVat;
 };
 
 
@@ -3275,6 +3279,7 @@ export type TypeTransport = {
   transportTypeCode: TypeTransportTypeEnum;
   /** UUID */
   uuid: Scalars['Uuid']['output'];
+  vat: TypeVat;
 };
 
 
@@ -3382,6 +3387,7 @@ export type TypeVariant = TypeBreadcrumb & TypeHreflang & TypeProduct & TypeSlug
   usps: Array<Scalars['String']['output']>;
   /** UUID */
   uuid: Scalars['Uuid']['output'];
+  vat: TypeVat;
 };
 
 
@@ -3394,6 +3400,15 @@ export type TypeVariantImagesArgs = {
 /** Represents a product */
 export type TypeVariantMainImageArgs = {
   type?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Represents a vat */
+export type TypeVat = {
+  __typename?: 'Vat';
+  /** Vat name */
+  name: Scalars['String']['output'];
+  /** Vat percent */
+  percent: Scalars['String']['output'];
 };
 
 export type TypeVideoToken = {

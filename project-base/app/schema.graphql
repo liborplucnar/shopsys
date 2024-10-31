@@ -1091,6 +1091,7 @@ type MainVariant implements Product & Hreflang & Breadcrumb & Slug {
   variants: [Variant!]!
   "Number of sellable variants"
   variantsCount: Int!
+  vat: Vat!
 }
 
 scalar Money
@@ -1671,6 +1672,7 @@ type Payment {
   type: String!
   "UUID"
   uuid: Uuid!
+  vat: Vat!
 }
 
 type PaymentSetupCreationData {
@@ -1806,6 +1808,7 @@ interface Product {
   usps: [String!]!
   "UUID"
   uuid: Uuid!
+  vat: Vat!
 }
 
 "A connection to a list of items."
@@ -2284,6 +2287,7 @@ type RegularProduct implements Product & Hreflang & Breadcrumb & Slug {
   usps: [String!]!
   "UUID"
   uuid: Uuid!
+  vat: Vat!
 }
 
 input RemoveCustomerUserDataInput {
@@ -2528,6 +2532,7 @@ type Transport {
   transportTypeCode: TransportTypeEnum!
   "UUID"
   uuid: Uuid!
+  vat: Vat!
 }
 
 "One of the possible methods of the transport type"
@@ -2618,6 +2623,15 @@ type Variant implements Product & Hreflang & Breadcrumb & Slug {
   usps: [String!]!
   "UUID"
   uuid: Uuid!
+  vat: Vat!
+}
+
+"Represents a vat"
+type Vat {
+  "Vat name"
+  name: String!
+  "Vat percent"
+  percent: String!
 }
 
 type VideoToken {
