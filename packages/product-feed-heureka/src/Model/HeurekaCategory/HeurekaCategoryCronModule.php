@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shopsys\ProductFeed\HeurekaBundle\Model\HeurekaCategory;
 
+use Monolog\Logger;
 use Shopsys\Plugin\Cron\SimpleCronModuleInterface;
-use Symfony\Bridge\Monolog\Logger;
 
 class HeurekaCategoryCronModule implements SimpleCronModuleInterface
 {
