@@ -177,11 +177,11 @@ If you have set a different locale, you can use `translations-dump` that will cr
 
 #### 3.6 Locale in administration
 
-Administration is by default in `en` locale.
+Administration uses the `en` locale by default for every newly created administrator.
 This means that for example, product list in administration tries to display translations of product names in `en` locale.
-If you want to switch it to the another locale, set a parameter `shopsys.admin_locale` in your `config/parameters_common.yaml` configuration to desired locale.
+The administrator can then change the locale to any of the storefront locales to fit his needs.
+If you want to switch the default value to the another locale, set a parameter `shopsys.admin_default_locale` in your `config/parameters_common.yaml` configuration to desired locale.
 However, the selected locale has to be one of registered domains locale.
-When you change admin locale, you have to update acceptance tests, to have administration use cases tested properly.
 
 You can change administration translations by adding messages into your `translations/messages.xx.po`.
 

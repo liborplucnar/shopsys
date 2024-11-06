@@ -60,8 +60,9 @@ See how to install Shopsys Platform in production and how to proceed when deploy
 
 ## How to set up the administration with a different locale/language (e.g., Czech)?
 
-The administration uses `en` locale by default.
-If you want to switch it to the another locale, set a parameter `shopsys.admin_locale` in your `config/parameters_common.yaml` configuration.
+Every administrator can switch the administration locale to any of the storefront locales to fit his needs.
+For the newly created administrators, the `en` locale is used by default.
+If you want to switch the defaul value to the another locale, set a parameter `shopsys.admin_default_locale` in your `config/parameters_common.yaml` configuration.
 However, the selected locale has to be one of registered domains locale.
 This scenario is described in more detail in the tutorial [How to Set Up Domains and Locales (Languages)](./how-to-set-up-domains-and-locales.md#36-locale-in-administration).
 
