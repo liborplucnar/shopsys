@@ -391,6 +391,9 @@ msgstr "Prosím zadejte cenu v platném formátu (kladné číslo s desetinnou �
 msgid "Please enter pricing group name"
 msgstr "Vyplňte prosím název cenové skupiny"
 
+msgid "Please enter product list name"
+msgstr "Vyplňte prosím název ceníku"
+
 msgid "Please enter promo code"
 msgstr "Vyplňte prosím promo kód"
 
@@ -471,6 +474,9 @@ msgstr "Původně vybraná hlavní URL již neexistuje"
 
 msgid "Price must be greater or equal to zero"
 msgstr "Cena musí být větší nebo rovna nule"
+
+msgid "Product list name cannot be longer than {{ limit }} characters"
+msgstr "Název ceníku nesmí být delší než {{ limit }} znaků"
 
 msgid "Product name cannot be longer than {{ limit }} characters"
 msgstr "Název produktu nesmí být delší než {{ limit }} znaků"

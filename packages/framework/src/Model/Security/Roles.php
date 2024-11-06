@@ -168,6 +168,9 @@ class Roles
 
     public const string ROLE_INQUIRY_VIEW = 'ROLE_INQUIRY_VIEW';
 
+    public const string ROLE_PRICE_LIST_FULL = 'ROLE_PRICE_LIST_FULL';
+    public const string ROLE_PRICE_LIST_VIEW = 'ROLE_PRICE_LIST_VIEW';
+
     /**
      * @return array<string, string>
      */
@@ -394,6 +397,10 @@ class Roles
             ],
             [
                 static::ROLE_INQUIRY_VIEW => t('Inquiries - view'),
+            ],
+            [
+                static::ROLE_PRICE_LIST_FULL => t('Price lists - full'),
+                static::ROLE_PRICE_LIST_VIEW => t('Price lists - view'),
             ],
         ];
     }
