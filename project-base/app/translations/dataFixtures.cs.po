@@ -493,6 +493,9 @@ msgstr "Článek blogu pro testování produktů"
 msgid "Blog article for search testing"
 msgstr "Článek blogu pro testování vyhledávání"
 
+msgid "Blue wednesday"
+msgstr "Modrá středa"
+
 msgid "Bluetooth"
 msgstr "Bluetooth"
 
@@ -1078,6 +1081,9 @@ msgstr "Rozhraní"
 msgid "Intuitive operation with its easy to handle even a novice in this field. Another big advantage is the use of technology burning \"on the fly\", which is spared not only your time but also the capacity of the disk, because the process does not create any storage (temporary) files on your hard disk."
 msgstr "Existují stovky programů pro vypalování, avšak vyznat se v nich není ani pro zkušeného uživatele vůbec jednoduché. Právě proto jsme pro vás s autorem českých bestsellerů připravili 2. aktualizované vydání této úspěšné publikace. S knihou získáte nejen průvodce nejrůznějším vypalováním na CD a DVD, ale všechny programy a aplikace si můžete okamžitě vyzkoušet, neboť je obsahuje přiložené DVD."
 
+msgid "Items on sale"
+msgstr "Produkty ve výprodeji"
+
 msgid "JURA Impressa J9 TFT Carbon"
 msgstr "JURA Impressa J9 TFT Carbon"
 
@@ -1462,6 +1468,9 @@ msgstr "Pravděpodobně ta nejlepší volba"
 msgid "Processor frequency (GHz)"
 msgstr "Frekvence procesoru (GHz)"
 
+msgid "Promoted products"
+msgstr "Promované produkty"
+
 msgid "Properties"
 msgstr "Vlastnosti"
 
@@ -1653,6 +1662,9 @@ msgstr "Kapesní reproduktor pro MP3 přehrávače, mobilní telefony, počíta�
 
 msgid "Speakers 2 x 3W RMS, 2.0 stereo, portable, volume control, frequency range of 150Hz-20kHz, sensitivity 80dB, 4Ohm impedance, power supply via USB, 3.5 mm audio jack, dimensions 85x85x107mm, weight 550 g"
 msgstr "Kapesní reproduktor pro MP3 přehrávače, mobilní telefony, počítače, notebooky, tablety atd. Stačí vybalit, zapojit a spustit přehrávání. S tímto reproduktorem získáte 360° zvukový zážitek na cestách."
+
+msgid "Special offers"
+msgstr "Speciální nabídky"
 
 msgid "Standard rate"
 msgstr "Standardní sazba"
