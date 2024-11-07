@@ -60,9 +60,9 @@ See how to install Shopsys Platform in production and how to proceed when deploy
 
 ## How to set up the administration with a different locale/language (e.g., Czech)?
 
-The administration uses `en` locale by default.
-If you want to switch it to the another locale, set a parameter `shopsys.admin_locale` in your `config/parameters_common.yaml` configuration.
-However, the selected locale has to be one of registered domains locale.
+Every administrator can switch the administration locale to any of the locales defined by the `shopsys.allowed_admin_locales` parameter in your `config/parameters_common.yaml` configuration.
+The first locale in the list is the default one.
+However, only locales that are defined in the `domains.yaml` config can be used in the administration.
 This scenario is described in more detail in the tutorial [How to Set Up Domains and Locales (Languages)](./how-to-set-up-domains-and-locales.md#36-locale-in-administration).
 
 ## What are the differences between "listable", "sellable", "offered" and "visible" products?
