@@ -27,6 +27,7 @@ Only the main variants are included in the product lists.
 
 **Sellable** - products that satisfied the conditions for **offered** and at the same time, these products are not the main variants.  
 Sellable products are products that can actually be purchased.
+Even products that have their stock quantity 0 or less are still considered sellable.
 Only the standard products or the specific variants can actually be purchased.
 
 ## How calculated attributes work?
