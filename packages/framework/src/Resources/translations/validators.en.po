@@ -454,6 +454,12 @@ msgstr ""
 msgid "Please enter valid email"
 msgstr ""
 
+msgid "Please enter valid from date"
+msgstr ""
+
+msgid "Please enter valid to date"
+msgstr ""
+
 msgid "Please enter warehouse name"
 msgstr ""
 

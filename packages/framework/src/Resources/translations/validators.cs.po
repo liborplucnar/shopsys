@@ -454,6 +454,12 @@ msgstr "Prosím zadejte platný třímístný kód měny podle standardu ISO 421
 msgid "Please enter valid email"
 msgstr "Vyplňte prosím platný e-mail"
 
+msgid "Please enter valid from date"
+msgstr "Vyplňte prosím platné datum od"
+
+msgid "Please enter valid to date"
+msgstr "Vyplňte prosím platné datum do"
+
 msgid "Please enter warehouse name"
 msgstr "Vyplňte prosím název skladu"
 
