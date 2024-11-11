@@ -259,6 +259,10 @@ class UploadedFileFacade extends AbstractUploadedFileFacade
      */
     public function getUploadedFileUrl(DomainConfig $domainConfig, UploadedFile $uploadedFile): string
     {
+        if ($this->isUploadedFileViewableInBrowser($uploadedFile)) {
+            return $this->uploadedFileLocator->getUploadedFileViewUrl($domainConfig, $uploadedFile);
+        }
+
         return $this->uploadedFileLocator->getUploadedFileUrl($domainConfig, $uploadedFile);
     }
 
@@ -508,5 +512,16 @@ class UploadedFileFacade extends AbstractUploadedFileFacade
     protected function getUploadedFileConfig(): UploadedFileConfigInterface
     {
         return $this->uploadedFileConfig;
+    }
+
+    /**
+     * @param \Shopsys\FrameworkBundle\Component\UploadedFile\UploadedFile $uploadedFile
+     * @return bool
+     */
+    protected function isUploadedFileViewableInBrowser(UploadedFile $uploadedFile): bool
+    {
+        $viewableExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'gif'];
+
+        return in_array($uploadedFile->getExtension(), $viewableExtensions, true);
     }
 }

@@ -31,6 +31,25 @@ class UploadedFileLocator extends AbstractUploadedFileLocator
     }
 
     /**
+     * @param \Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig $domainConfig
+     * @param \Shopsys\FrameworkBundle\Component\UploadedFile\UploadedFile $uploadedFile
+     * @return string
+     */
+    public function getUploadedFileViewUrl(DomainConfig $domainConfig, UploadedFile $uploadedFile): string
+    {
+        if ($this->fileExists($uploadedFile)) {
+            $domainRouter = $this->domainRouterFactory->getRouter($domainConfig->getId());
+
+            return $domainRouter->generate('front_view_uploaded_file', [
+                'uploadedFileId' => $uploadedFile->getId(),
+                'uploadedFilename' => $uploadedFile->getSlugWithExtension(),
+            ]);
+        }
+
+        throw new FileNotFoundException();
+    }
+
+    /**
      * @param \Shopsys\FrameworkBundle\Component\AbstractUploadedFile\UploadedFileInterface $uploadedFile
      * @return string
      */
