@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Shopsys\FrameworkBundle\Controller\Front;
 
+use Exception;
 use League\Flysystem\FilesystemOperator;
+use Shopsys\FrameworkBundle\Component\CustomerUploadedFile\Exception\CustomerFileNotFoundException;
 use Shopsys\FrameworkBundle\Component\HttpFoundation\DownloadFileResponse;
 use Shopsys\FrameworkBundle\Component\UploadedFile\UploadedFile;
 use Shopsys\FrameworkBundle\Component\UploadedFile\UploadedFileFacade;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UploadedFileController
 {
@@ -29,14 +32,20 @@ class UploadedFileController
      */
     public function downloadAction(int $uploadedFileId, string $uploadedFilename): DownloadFileResponse
     {
-        $uploadedFile = $this->getByIdSlugAndExtension($uploadedFilename, $uploadedFileId);
-        $filePath = $this->uploadedFileFacade->getAbsoluteUploadedFileFilepath($uploadedFile);
+        try {
+            $uploadedFile = $this->getByIdSlugAndExtension($uploadedFilename, $uploadedFileId);
+            $filePath = $this->uploadedFileFacade->getAbsoluteUploadedFileFilepath($uploadedFile);
 
-        return new DownloadFileResponse(
-            $uploadedFile->getNameWithExtension(),
-            $this->filesystem->read($filePath),
-            $this->filesystem->mimeType($filePath),
-        );
+            return new DownloadFileResponse(
+                $uploadedFile->getNameWithExtension(),
+                $this->filesystem->read($filePath),
+                $this->filesystem->mimeType($filePath),
+            );
+        } catch (Exception $e) {
+            $message = sprintf('Uploaded file with ID "%s" not found.', $uploadedFileId);
+
+            throw new NotFoundHttpException($message, $e, 0, ['X-Accel-Redirect' => '@storefront']);
+        }
     }
 
     /**
@@ -46,17 +55,23 @@ class UploadedFileController
      */
     public function viewAction(int $uploadedFileId, string $uploadedFilename): StreamedResponse
     {
-        $uploadedFile = $this->getByIdSlugAndExtension($uploadedFilename, $uploadedFileId);
-        $filePath = $this->uploadedFileFacade->getAbsoluteUploadedFileFilepath($uploadedFile);
+        try {
+            $uploadedFile = $this->getByIdSlugAndExtension($uploadedFilename, $uploadedFileId);
+            $filePath = $this->uploadedFileFacade->getAbsoluteUploadedFileFilepath($uploadedFile);
 
-        return new StreamedResponse(function () use ($filePath) {
-            $stream = $this->filesystem->readStream($filePath);
-            fpassthru($stream);
-            fclose($stream);
-        }, 200, [
-            'Content-Type' => $this->filesystem->mimeType($filePath),
-            'Content-Disposition' => sprintf('inline; filename="%s"', $uploadedFile->getNameWithExtension()),
-        ]);
+            return new StreamedResponse(function () use ($filePath) {
+                $stream = $this->filesystem->readStream($filePath);
+                fpassthru($stream);
+                fclose($stream);
+            }, 200, [
+                'Content-Type' => $this->filesystem->mimeType($filePath),
+                'Content-Disposition' => sprintf('inline; filename="%s"', $uploadedFile->getNameWithExtension()),
+            ]);
+        } catch (Exception $e) {
+            $message = sprintf('Uploaded file with ID "%s" not found.', $uploadedFileId);
+
+            throw new NotFoundHttpException($message, $e, 0, ['X-Accel-Redirect' => '@storefront']);
+        }
     }
 
     /**
