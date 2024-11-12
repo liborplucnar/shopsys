@@ -19,6 +19,7 @@ import { forwardRef } from 'react';
 import { twJoin } from 'tailwind-merge';
 import { FunctionComponentProps } from 'types/globals';
 import { twMergeCustom } from 'utils/twMerge';
+import { disableClickWhenTextSelected } from 'utils/ui/disableClickWhenTextSelected';
 
 export type ProductVisibleItemsConfigType = {
     addToCart?: boolean;
@@ -71,7 +72,7 @@ export const ProductListItem = forwardRef<HTMLLIElement, ProductItemProps>(
                 ref={ref}
                 tid={TIDs.blocks_product_list_listeditem_ + product.catalogNumber}
                 className={twMergeCustom(
-                    'group relative flex select-none flex-col gap-2.5 rounded-xl border border-backgroundMore bg-backgroundMore px-2.5 py-5 text-left transition sm:px-5',
+                    'group relative flex select-none flex-col gap-2.5 rounded-xl border border-backgroundMore bg-backgroundMore pb-2.5 text-left transition sm:pb-5',
                     size === 'small' && 'p-5',
                     'hover:border-borderAccentLess hover:bg-background',
                     className,
@@ -92,11 +93,12 @@ export const ProductListItem = forwardRef<HTMLLIElement, ProductItemProps>(
                 )}
 
                 <ExtendedNextLink
-                    className="flex select-none flex-col gap-2.5 text-text no-underline hover:text-link hover:no-underline"
+                    className="flex select-text flex-col gap-2.5 px-2.5 py-5 text-text no-underline hover:text-link hover:no-underline sm:px-5 sm:pb-0"
                     draggable={false}
                     href={product.slug}
                     type={product.isMainVariant ? 'productMainVariant' : 'product'}
-                    onClick={() => {
+                    onClickExtended={disableClickWhenTextSelected}
+                    onMouseUp={() => {
                         onGtmProductClickEventHandler(
                             product,
                             gtmProductListName,
@@ -132,7 +134,7 @@ export const ProductListItem = forwardRef<HTMLLIElement, ProductItemProps>(
                     )}
                 </ExtendedNextLink>
 
-                <div className="flex w-full items-center justify-between gap-1 sm:justify-normal sm:gap-2.5">
+                <div className="flex w-full items-center justify-between gap-1 px-2.5 py-5 sm:justify-normal sm:gap-2.5 sm:px-5 sm:py-0">
                     {visibleItemsConfig.addToCart && (
                         <ProductAction
                             gtmMessageOrigin={gtmMessageOrigin}
@@ -156,7 +158,7 @@ export const ProductListItem = forwardRef<HTMLLIElement, ProductItemProps>(
                     )}
                 </div>
                 {product.__typename === 'MainVariant' && (
-                    <div className="flex w-fit items-center gap-1.5 whitespace-nowrap rounded-md bg-background px-2.5 py-1.5 font-secondary text-xs">
+                    <div className="mx-2.5 flex w-fit items-center gap-1.5 whitespace-nowrap rounded-md bg-background px-2.5 py-1.5 font-secondary text-xs sm:mx-5">
                         <VariantIcon className="size-3 text-textAccent" />
                         {product.variantsCount} {t('variants count', { count: product.variantsCount })}
                     </div>
