@@ -25,7 +25,7 @@ class GoogleProductFormType extends AbstractType
      * @param \Symfony\Component\Form\FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('show', MultidomainType::class, [
             'label' => $this->translator->trans('Show in feed'),
