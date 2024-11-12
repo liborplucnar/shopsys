@@ -11,21 +11,18 @@ use Shopsys\FrameworkBundle\Model\Pricing\Price;
 
 class LuigisBoxProductFeedItem implements FeedItemInterface
 {
-    public const UNIQUE_IDENTIFIER_PREFIX = 'product';
-    protected const SMALL_IMAGE_SIZE = 100;
-    protected const MEDIUM_IMAGE_SIZE = 200;
-    protected const LARGE_IMAGE_SIZE = 600;
-    protected const AVAILABILITY_RANK_OUT_OF_STOCK = 15;
-    protected const AVAILABILITY_RANK_IN_STOCK = 1;
-    protected const AVAILABILITY_RANK_AVAILABLE_IN_LONG_TIME = 14;
+    public const string UNIQUE_IDENTIFIER_PREFIX = 'product';
+    protected const int SMALL_IMAGE_SIZE = 100;
+    protected const int MEDIUM_IMAGE_SIZE = 200;
+    protected const int LARGE_IMAGE_SIZE = 600;
+    protected const int SELLABLE_PRODUCT_AVAILABILITY = 1;
 
     /**
      * @param int $id
      * @param string $name
      * @param string $catalogNumber
      * @param string $availabilityText
-     * @param bool $isAvailable
-     * @param int|null $availableInDays
+     * @param int $availabilityRank
      * @param \Shopsys\FrameworkBundle\Model\Pricing\Price $price
      * @param \Shopsys\FrameworkBundle\Model\Pricing\Currency\Currency $currency
      * @param int $mainCategoryId
@@ -47,8 +44,7 @@ class LuigisBoxProductFeedItem implements FeedItemInterface
         protected readonly string $name,
         protected readonly string $catalogNumber,
         protected readonly string $availabilityText,
-        protected readonly bool $isAvailable,
-        protected readonly int|null $availableInDays,
+        protected readonly int $availabilityRank,
         protected readonly Price $price,
         protected readonly Currency $currency,
         protected readonly int $mainCategoryId,
@@ -164,27 +160,15 @@ class LuigisBoxProductFeedItem implements FeedItemInterface
      */
     public function getAvailabilityRank(): int
     {
-        if (!$this->isAvailable) {
-            return static::AVAILABILITY_RANK_OUT_OF_STOCK;
-        }
-
-        if ($this->availableInDays >= 15 || $this->availableInDays === null) {
-            return static::AVAILABILITY_RANK_AVAILABLE_IN_LONG_TIME;
-        }
-
-        if ($this->availableInDays <= 0) {
-            return static::AVAILABILITY_RANK_IN_STOCK;
-        }
-
-        return $this->availableInDays;
+        return $this->availabilityRank;
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function getAvailability(): bool
+    public function getAvailability(): int
     {
-        return $this->isAvailable;
+        return self::SELLABLE_PRODUCT_AVAILABILITY;
     }
 
     /**

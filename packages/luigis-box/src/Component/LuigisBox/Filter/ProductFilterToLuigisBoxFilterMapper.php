@@ -102,7 +102,7 @@ class ProductFilterToLuigisBoxFilterMapper
         array $luigisBoxFilter,
     ): array {
         if ($productFilterData->inStock === true) {
-            $luigisBoxFilter[self::FILTER_OR][] = 'availability:1';
+            $luigisBoxFilter[self::FILTER_OR][] = 'availability_rank:1';
         }
 
         return $luigisBoxFilter;

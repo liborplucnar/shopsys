@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shopsys\ProductFeed\LuigisBoxBundle\Model\FeedItem;
 
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
+use Shopsys\FrameworkBundle\Component\Setting\Setting;
 use Shopsys\FrameworkBundle\Model\Category\CategoryRepository;
 use Shopsys\FrameworkBundle\Model\Pricing\Currency\Currency;
 use Shopsys\FrameworkBundle\Model\Pricing\Currency\CurrencyFacade;
@@ -25,6 +26,7 @@ class LuigisBoxProductFeedItemFactory
      * @param \Shopsys\FrameworkBundle\Model\Category\CategoryRepository $categoryRepository
      * @param \Shopsys\FrameworkBundle\Model\Product\ProductCachedAttributesFacade $productCachedAttributesFacade
      * @param \Shopsys\FrameworkBundle\Model\Product\Availability\ProductAvailabilityFacade $productAvailabilityFacade
+     * @param \Shopsys\FrameworkBundle\Component\Setting\Setting $setting
      */
     public function __construct(
         protected readonly ProductPriceCalculationForCustomerUser $productPriceCalculationForCustomerUser,
@@ -33,6 +35,7 @@ class LuigisBoxProductFeedItemFactory
         protected readonly CategoryRepository $categoryRepository,
         protected readonly ProductCachedAttributesFacade $productCachedAttributesFacade,
         protected readonly ProductAvailabilityFacade $productAvailabilityFacade,
+        protected readonly Setting $setting,
     ) {
     }
 
@@ -47,8 +50,6 @@ class LuigisBoxProductFeedItemFactory
         $rootCategory = $this->categoryRepository->getRootCategory();
         $mainCategory = $this->categoryRepository->getProductMainCategoryOnDomain($product, $domainConfig->getId());
         $availabilityText = $this->productAvailabilityFacade->getProductAvailabilityInformationByDomainId($product, $domainConfig->getId());
-        $isAvailable = $this->productAvailabilityFacade->isProductAvailableOnDomainCached($product, $domainConfig->getId());
-        $availableInDays = $isAvailable ? 0 : null;
         $productDescription = $product->isVariant() ? $product->getMainVariant()->getDescriptionAsPlainText($domainConfig->getId()) : $product->getDescriptionAsPlainText($domainConfig->getId());
         $categories = $product->getCategoriesIndexedByDomainId()[$domainConfig->getId()];
         $categoryHierarchyNamesByCategoryId = [];
@@ -90,8 +91,7 @@ class LuigisBoxProductFeedItemFactory
             $product->getName($domainConfig->getLocale()),
             $product->getCatnum(),
             $availabilityText,
-            $isAvailable,
-            $availableInDays,
+            $this->getAvailabilityRank($product, $domainConfig),
             $this->getPrice($product, $domainConfig),
             $this->getCurrency($domainConfig),
             $mainCategory->getId(),
@@ -131,5 +131,15 @@ class LuigisBoxProductFeedItemFactory
     protected function getCurrency(DomainConfig $domainConfig): Currency
     {
         return $this->currencyFacade->getDomainDefaultCurrencyByDomainId($domainConfig->getId());
+    }
+
+    /**
+     * @param \Shopsys\FrameworkBundle\Model\Product\Product $product
+     * @param \Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig $domainConfig
+     * @return int
+     */
+    protected function getAvailabilityRank(Product $product, DomainConfig $domainConfig): int
+    {
+        return $this->productAvailabilityFacade->isProductAvailableOnDomainCached($product, $domainConfig->getId()) ? 1 : $this->setting->getForDomain(Setting::LUIGIS_BOX_RANK, $domainConfig->getId());
     }
 }
