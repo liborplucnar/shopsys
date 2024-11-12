@@ -49,7 +49,7 @@ class ZboziFeedItemTest extends TestCase
         $this->productParametersBatchLoaderMock = $this->createMock(ProductParametersBatchLoader::class);
         $this->categoryFacadeMock = $this->createMock(CategoryFacade::class);
         $productAvailabilityFacadeMock = $this->createMock(ProductAvailabilityFacade::class);
-        $productAvailabilityFacadeMock->method('getProductAvailabilityDaysByDomainId')->willReturn(0);
+        $productAvailabilityFacadeMock->method('getProductAvailabilityDaysForFeedsByDomainId')->willReturn(0);
 
         $this->zboziFeedItemFactory = new ZboziFeedItemFactory(
             $this->productPriceCalculationForCustomerUserMock,

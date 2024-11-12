@@ -60,7 +60,7 @@ class ZboziFeedItemFactory
             $this->getBrandName($product),
             $product->getEan(),
             $product->getPartno(),
-            $this->productAvailabilityFacade->getProductAvailabilityDaysByDomainId($product, $domainConfig->getId()),
+            $this->productAvailabilityFacade->getProductAvailabilityDaysForFeedsByDomainId($product, $domainConfig->getId()),
             $cpc,
             $cpcSearch,
         );

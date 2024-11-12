@@ -50,7 +50,7 @@ class HeurekaFeedItemTest extends TestCase
         $this->heurekaCategoryFacadeMock = $this->createMock(HeurekaCategoryFacade::class);
         $this->categoryFacadeMock = $this->createMock(CategoryFacade::class);
         $productAvailabilityFacadeMock = $this->createMock(ProductAvailabilityFacade::class);
-        $productAvailabilityFacadeMock->method('getProductAvailabilityDaysByDomainId')->willReturn(0);
+        $productAvailabilityFacadeMock->method('getProductAvailabilityDaysForFeedsByDomainId')->willReturn(0);
 
         $this->heurekaFeedItemFactory = new HeurekaFeedItemFactory(
             $this->productPriceCalculationForCustomerUserMock,

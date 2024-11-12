@@ -7,7 +7,6 @@ namespace Shopsys\ProductFeed\ZboziBundle\Model\Product;
 use Doctrine\ORM\Query\Expr\Join;
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
 use Shopsys\FrameworkBundle\Model\Pricing\Group\PricingGroup;
-use Shopsys\FrameworkBundle\Model\Product\Product;
 use Shopsys\FrameworkBundle\Model\Product\ProductRepository;
 
 class ZboziProductRepository
@@ -32,14 +31,9 @@ class ZboziProductRepository
         ?int $lastSeekId,
         int $maxResults,
     ): iterable {
-        $queryBuilder = $this->productRepository->getAllVisibleWithoutInquiriesQueryBuilder($domainConfig->getId(), $pricingGroup)
+        $queryBuilder = $this->productRepository->getAllSellableWithoutInquiriesQueryBuilder($domainConfig->getId(), $pricingGroup)
             ->addSelect('b')->leftJoin('p.brand', 'b')
             ->leftJoin(ZboziProductDomain::class, 'zpd', Join::WITH, 'zpd.product = p AND zpd.domainId = :domainId')
-            ->andWhere('p.variantType != :variantTypeMain')->setParameter(
-                'variantTypeMain',
-                Product::VARIANT_TYPE_MAIN,
-            )
-            ->andWhere('p.calculatedSellingDenied = FALSE')
             ->andWhere('zpd IS NULL OR zpd.show = TRUE')
             ->orderBy('p.id', 'asc')
             ->setMaxResults($maxResults);

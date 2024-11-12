@@ -48,7 +48,7 @@ class LuigisBoxProductFeedItemFactory
         $mainCategory = $this->categoryRepository->getProductMainCategoryOnDomain($product, $domainConfig->getId());
         $availabilityText = $this->productAvailabilityFacade->getProductAvailabilityInformationByDomainId($product, $domainConfig->getId());
         $isAvailable = $this->productAvailabilityFacade->isProductAvailableOnDomainCached($product, $domainConfig->getId());
-        $availableInDays = $this->productAvailabilityFacade->getProductAvailabilityDaysByDomainId($product, $domainConfig->getId());
+        $availableInDays = $isAvailable ? 0 : null;
         $productDescription = $product->isVariant() ? $product->getMainVariant()->getDescriptionAsPlainText($domainConfig->getId()) : $product->getDescriptionAsPlainText($domainConfig->getId());
         $categories = $product->getCategoriesIndexedByDomainId()[$domainConfig->getId()];
         $categoryHierarchyNamesByCategoryId = [];
