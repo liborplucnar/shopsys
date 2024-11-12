@@ -11,6 +11,7 @@ use Shopsys\Releaser\Command\SymfonyStyleFactory;
 use Shopsys\Releaser\Process\ProcessRunner;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class AbstractShopsysReleaseWorker implements StageWorkerInterface
 {
@@ -59,11 +60,11 @@ abstract class AbstractShopsysReleaseWorker implements StageWorkerInterface
     protected string $currentBranchName;
 
     /**
-     * @required
      * @param \Shopsys\Releaser\Command\SymfonyStyleFactory $symfonyStyleFactory
      * @param \Shopsys\Releaser\Process\ProcessRunner $processRunner
      * @throws \Shopsys\Releaser\Exception\ShouldNotHappenException
      */
+    #[Required]
     public function setup(
         SymfonyStyleFactory $symfonyStyleFactory,
         ProcessRunner $processRunner,
