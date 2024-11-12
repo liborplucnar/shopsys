@@ -518,7 +518,7 @@ jobs:
                     cp -rf snapshots/* project-base/storefront/cypress/snapshots/
                     git config --global user.name 'ShopsysBot'
                     git config --global user.email 'shopsysbot@users.noreply.github.com'
-                    git add project-base/storefront/cypress/snapshots
+                    git add project-base/storefront/cypress/snapshots/e2e
                     git commit -m "regenerate screenshots"
             -   name: Remove "regenerate screenshots" label
                 run: |
