@@ -16,6 +16,7 @@ There is a list of all the repositories maintained by the monorepo:
 - [shopsys/brand-feed-luigis-box](https://github.com/shopsys/brand-feed-luigis-box)
 - [shopsys/category-feed-luigis-box](https://github.com/shopsys/category-feed-luigis-box)
 - [shopsys/product-feed-google](https://github.com/shopsys/product-feed-google)
+- [shopsys/product-feed-mergado](https://github.com/shopsys/product-feed-mergado)
 - [shopsys/product-feed-heureka](https://github.com/shopsys/product-feed-heureka)
 - [shopsys/product-feed-heureka-delivery](https://github.com/shopsys/product-feed-heureka-delivery)
 - [shopsys/product-feed-zbozi](https://github.com/shopsys/product-feed-zbozi)

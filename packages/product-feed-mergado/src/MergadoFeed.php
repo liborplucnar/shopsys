@@ -2,23 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\ProductFeed\MergadoFeed;
+namespace Shopsys\ProductFeed\MergadoBundle;
 
-use App\Model\ProductFeed\Mergado\MergadoFeedInfo;
-use App\Model\ProductFeed\Mergado\MergadoFeedItemFacade;
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
 use Shopsys\FrameworkBundle\Model\Feed\FeedInfoInterface;
 use Shopsys\FrameworkBundle\Model\Feed\FeedInterface;
+use Shopsys\ProductFeed\MergadoBundle\Model\FeedItem\MergadoFeedItemFacade;
 
 class MergadoFeed implements FeedInterface
 {
     /**
-     * @param \App\Model\ProductFeed\Mergado\MergadoFeedInfo $mergadoFeedInfo
-     * @param \App\Model\ProductFeed\Mergado\MergadoFeedItemFacade $mergadoFeedItemFacade
+     * @param \Shopsys\ProductFeed\MergadoBundle\MergadoFeedInfo $mergadoFeedInfo
+     * @param \Shopsys\ProductFeed\MergadoBundle\Model\FeedItem\MergadoFeedItemFacade $mergadoFeedItemFacade
      */
     public function __construct(
-        private MergadoFeedInfo $mergadoFeedInfo,
-        private MergadoFeedItemFacade $mergadoFeedItemFacade,
+        protected MergadoFeedInfo $mergadoFeedInfo,
+        protected MergadoFeedItemFacade $mergadoFeedItemFacade,
     ) {
     }
 
@@ -35,7 +34,7 @@ class MergadoFeed implements FeedInterface
      */
     public function getTemplateFilepath(): string
     {
-        return 'feed/mergadoFeed.xml.twig';
+        return '@ShopsysProductFeedMergado/feed.xml.twig';
     }
 
     /**

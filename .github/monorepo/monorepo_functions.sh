@@ -12,8 +12,10 @@ NC="\e[0m"
 # If you modify this list do not forget updating:
 #   \Shopsys\Releaser\ReleaseWorker\AbstractShopsysReleaseWorker
 #   /docs/introduction/monorepo.md
-#   /CHANGELOG.md
+#   docs/contributing/guidelines-for-writing-upgrade.md
+#   /CHANGELOG-XX.md
 #   /packages/framework/src/Resources/config/packages_registry.yaml
+#   project-base/app/config/bundles.php
 #   "replace" section in monorepo's composer.json
 get_all_packages() {
     echo "administration \
@@ -25,6 +27,7 @@ get_all_packages() {
         convertim \
         product-feed-zbozi \
         product-feed-google \
+        product-feed-mergado \
         product-feed-heureka \
         product-feed-heureka-delivery \
         product-feed-luigis-box \

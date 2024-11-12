@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace App\Model\ProductFeed\Mergado;
+namespace Shopsys\ProductFeed\MergadoBundle\Model\FeedItem;
 
-use App\Model\ProductFeed\Mergado\FeedItem\MergadoFeedItemFactory;
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
 use Shopsys\FrameworkBundle\Model\Pricing\Group\PricingGroupSettingFacade;
 use Shopsys\FrameworkBundle\Model\Product\Collection\ProductParametersBatchLoader;
 use Shopsys\FrameworkBundle\Model\Product\Collection\ProductUrlsBatchLoader;
+use Shopsys\ProductFeed\MergadoBundle\Model\Product\MergadoProductRepository;
 
 class MergadoFeedItemFacade
 {
     /**
-     * @param \App\Model\ProductFeed\Mergado\MergadoProductRepository $mergadoProductRepository
+     * @param \Shopsys\ProductFeed\MergadoBundle\Model\Product\MergadoProductRepository $mergadoProductRepository
      * @param \Shopsys\FrameworkBundle\Model\Pricing\Group\PricingGroupSettingFacade $pricingGroupSettingFacade
      * @param \Shopsys\FrameworkBundle\Model\Product\Collection\ProductUrlsBatchLoader $productUrlsBatchLoader
      * @param \Shopsys\FrameworkBundle\Model\Product\Collection\ProductParametersBatchLoader $productParametersBatchLoader
-     * @param \App\Model\ProductFeed\Mergado\FeedItem\MergadoFeedItemFactory $mergadoFeedItemFactory
+     * @param \Shopsys\ProductFeed\MergadoBundle\Model\FeedItem\MergadoFeedItemFactory $mergadoFeedItemFactory
      */
     public function __construct(
-        private readonly MergadoProductRepository $mergadoProductRepository,
-        private readonly PricingGroupSettingFacade $pricingGroupSettingFacade,
-        private readonly ProductUrlsBatchLoader $productUrlsBatchLoader,
-        private readonly ProductParametersBatchLoader $productParametersBatchLoader,
-        private readonly MergadoFeedItemFactory $mergadoFeedItemFactory,
+        protected readonly MergadoProductRepository $mergadoProductRepository,
+        protected readonly PricingGroupSettingFacade $pricingGroupSettingFacade,
+        protected readonly ProductUrlsBatchLoader $productUrlsBatchLoader,
+        protected readonly ProductParametersBatchLoader $productParametersBatchLoader,
+        protected readonly MergadoFeedItemFactory $mergadoFeedItemFactory,
     ) {
     }
 

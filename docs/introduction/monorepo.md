@@ -35,6 +35,7 @@ If you are interested, you can read more about the monorepo approach here - http
 - [shopsys/category-feed-luigis-box](https://github.com/shopsys/category-feed-luigis-box)
 - [shopsys/product-feed-zbozi](https://github.com/shopsys/product-feed-zbozi)
 - [shopsys/product-feed-google](https://github.com/shopsys/product-feed-google)
+- [shopsys/product-feed-mergado](https://github.com/shopsys/product-feed-mergado)
 - [shopsys/product-feed-heureka](https://github.com/shopsys/product-feed-heureka)
 - [shopsys/product-feed-heureka-delivery](https://github.com/shopsys/product-feed-heureka-delivery)
 - [shopsys/product-feed-luigis-box](https://github.com/shopsys/product-feed-luigis-box)

@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Model\ProductFeed\Mergado;
+namespace Shopsys\ProductFeed\MergadoBundle\Model\Product;
 
-use App\Model\Product\ProductRepository;
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
 use Shopsys\FrameworkBundle\Model\Pricing\Group\PricingGroup;
-use Shopsys\FrameworkBundle\Model\Product\Product;
+use Shopsys\FrameworkBundle\Model\Product\ProductRepository;
 
 class MergadoProductRepository
 {
     /**
-     * @param \App\Model\Product\ProductRepository $productRepository
+     * @param \Shopsys\FrameworkBundle\Model\Product\ProductRepository $productRepository
      */
     public function __construct(protected ProductRepository $productRepository)
     {
@@ -23,7 +22,7 @@ class MergadoProductRepository
      * @param \Shopsys\FrameworkBundle\Model\Pricing\Group\PricingGroup $pricingGroup
      * @param int|null $lastSeekId
      * @param int $maxResults
-     * @return \App\Model\Product\Product[]
+     * @return \Shopsys\FrameworkBundle\Model\Product\Product[]
      */
     public function getProducts(
         DomainConfig $domainConfig,
@@ -31,16 +30,13 @@ class MergadoProductRepository
         ?int $lastSeekId,
         int $maxResults,
     ): array {
-        $queryBuilder = $this->productRepository->getAllVisibleWithoutInquiriesQueryBuilder($domainConfig->getId(), $pricingGroup)
+        $queryBuilder = $this->productRepository->getAllSellableWithoutInquiriesQueryBuilder($domainConfig->getId(), $pricingGroup)
             ->addSelect('b')->leftJoin('p.brand', 'b')
-            ->andWhere('p.variantType != :variantTypeMain')->setParameter('variantTypeMain', Product::VARIANT_TYPE_MAIN)
             ->orderBy('p.id', 'asc')
             ->setMaxResults($maxResults);
 
-        $this->productRepository->filterTemporaryExcludedProducts($queryBuilder, $domainConfig->getId());
         $this->productRepository->addTranslation($queryBuilder, $domainConfig->getLocale());
         $this->productRepository->addDomain($queryBuilder, $domainConfig->getId());
-        $queryBuilder->andWhere('pd.calculatedSaleExclusion = FALSE');
 
         $queryBuilder->addSelect('v')->join('pd.vat', 'v');
 

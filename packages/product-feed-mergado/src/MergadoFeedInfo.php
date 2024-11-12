@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Model\ProductFeed\Mergado;
+namespace Shopsys\ProductFeed\MergadoBundle;
 
 use Shopsys\FrameworkBundle\Model\Feed\FeedInfoInterface;
 
