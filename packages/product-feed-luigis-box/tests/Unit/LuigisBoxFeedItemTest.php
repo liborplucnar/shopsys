@@ -237,7 +237,7 @@ class LuigisBoxFeedItemTest extends TestCase
 
         $this->defaultProduct = $this->createMock(Product::class);
         $this->defaultProduct->method('getId')->willReturn(self::PRODUCT_ID);
-        $this->defaultProduct->method('getName')->with(self::DEFAULT_LOCALE)->willReturn(self::PRODUCT_NAME);
+        $this->defaultProduct->method('getFullName')->with(self::DEFAULT_LOCALE)->willReturn(self::PRODUCT_NAME);
         $this->defaultProduct->method('getFlags')->willReturn([$flag]);
         $this->defaultProduct->method('getCategoriesIndexedByDomainId')->willReturn([self::MAIN_CATEGORY_ID => [$mainCategory]]);
         $this->defaultProduct->method('isMainVariant')->willReturn(false);

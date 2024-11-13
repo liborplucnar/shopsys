@@ -78,7 +78,7 @@ class GoogleFeedItemTest extends TestCase
 
         $this->defaultProduct = $this->createMock(Product::class);
         $this->defaultProduct->method('getId')->willReturn(1);
-        $this->defaultProduct->method('getName')->with('en')->willReturn('product name');
+        $this->defaultProduct->method('getFullName')->with('en')->willReturn('product name');
 
         $this->mockProductPrice($this->defaultProduct, $this->defaultDomain, Price::zero());
         $this->mockProductUrl($this->defaultProduct, $this->defaultDomain, 'https://example.com/product-1');

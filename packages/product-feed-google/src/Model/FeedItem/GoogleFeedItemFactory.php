@@ -38,7 +38,7 @@ class GoogleFeedItemFactory
     {
         return new GoogleFeedItem(
             $product->getId(),
-            $product->getName($domainConfig->getLocale()),
+            $product->getFullName($domainConfig->getLocale()),
             !$this->productAvailabilityFacade->isProductAvailableOnDomainCached($product, $domainConfig->getId()),
             $this->getPrice($product, $domainConfig),
             $this->getCurrency($domainConfig),

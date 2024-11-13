@@ -88,7 +88,7 @@ class LuigisBoxProductFeedItemFactory
 
         return new LuigisBoxProductFeedItem(
             $product->getId(),
-            $product->getName($domainConfig->getLocale()),
+            $product->getFullName($domainConfig->getLocale()),
             $product->getCatnum(),
             $availabilityText,
             $this->getAvailabilityRank($product, $domainConfig),

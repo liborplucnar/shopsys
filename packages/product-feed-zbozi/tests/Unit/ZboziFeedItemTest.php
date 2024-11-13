@@ -63,7 +63,7 @@ class ZboziFeedItemTest extends TestCase
 
         $this->defaultProduct = $this->createMock(Product::class);
         $this->defaultProduct->method('getId')->willReturn(1);
-        $this->defaultProduct->method('getName')->with('cs')->willReturn('product name');
+        $this->defaultProduct->method('getFullName')->with('cs')->willReturn('product name');
 
         $productPrice = new ProductPrice(Price::zero(), false);
         $this->productPriceCalculationForCustomerUserMock->method('calculatePriceForCustomerUserAndDomainId')

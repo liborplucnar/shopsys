@@ -46,7 +46,7 @@ class HeurekaFeedItemFactory
 
         return new HeurekaFeedItem(
             $product->getId(),
-            $product->getName($domainConfig->getLocale()),
+            $product->getFullName($domainConfig->getLocale()),
             $this->productDataBatchLoader->getProductParametersByName($product, $domainConfig),
             $this->productDataBatchLoader->getProductUrl($product, $domainConfig),
             $this->getPrice($product, $domainConfig),
