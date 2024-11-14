@@ -5303,15 +5303,6 @@ Product images
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>link</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Product link
-
-</td>
-</tr>
-<tr>
 <td colspan="2" valign="top"><strong>mainImage</strong></td>
 <td valign="top"><a href="#image">Image</a></td>
 <td>
@@ -7921,15 +7912,6 @@ Product images
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>link</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Product link
-
-</td>
-</tr>
-<tr>
 <td colspan="2" valign="top"><strong>mainImage</strong></td>
 <td valign="top"><a href="#image">Image</a></td>
 <td>
@@ -9187,15 +9169,6 @@ Product images
 <td colspan="2" valign="top"><strong>isVisible</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>link</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Product link
-
-</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>mainImage</strong></td>
@@ -12459,15 +12432,6 @@ Product images
 <td colspan="2" valign="top"><strong>isVisible</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>link</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td>
-
-Product link
-
-</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>mainImage</strong></td>

@@ -1032,8 +1032,6 @@ type MainVariant implements Product & Hreflang & Breadcrumb & Slug {
   isMainVariant: Boolean!
   isSellingDenied: Boolean!
   isVisible: Boolean!
-  "Product link"
-  link: String!
   "Product image by params"
   mainImage(type: String = null): Image
   "Localized product name (domain dependent)"
@@ -1748,8 +1746,6 @@ interface Product {
   isMainVariant: Boolean!
   isSellingDenied: Boolean!
   isVisible: Boolean!
-  "Product link"
-  link: String!
   "Product image by params"
   mainImage(type: String = null): Image
   "Localized product name (domain dependent)"
@@ -2211,8 +2207,6 @@ type RegularProduct implements Product & Hreflang & Breadcrumb & Slug {
   isMainVariant: Boolean!
   isSellingDenied: Boolean!
   isVisible: Boolean!
-  "Product link"
-  link: String!
   "Product image by params"
   mainImage(type: String = null): Image
   "Localized product name (domain dependent)"
@@ -2542,8 +2536,6 @@ type Variant implements Product & Hreflang & Breadcrumb & Slug {
   isMainVariant: Boolean!
   isSellingDenied: Boolean!
   isVisible: Boolean!
-  "Product link"
-  link: String!
   "Product image by params"
   mainImage(type: String = null): Image
   mainVariant: MainVariant
