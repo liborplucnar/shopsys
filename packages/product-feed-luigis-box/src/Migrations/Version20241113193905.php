@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Shopsys\FrameworkBundle\Migrations;
+namespace Shopsys\ProductFeed\LuigisBoxBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
+use Shopsys\FrameworkBundle\Migrations\MultidomainMigrationTrait;
 use Shopsys\MigrationBundle\Component\Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
-class Version20241105132620 extends AbstractMigration implements ContainerAwareInterface
+class Version20241113193905 extends AbstractMigration implements ContainerAwareInterface
 {
     use MultidomainMigrationTrait;
 
@@ -20,8 +21,8 @@ class Version20241105132620 extends AbstractMigration implements ContainerAwareI
         foreach ($this->getAllDomainIds() as $domainId) {
             $this->sql('INSERT INTO setting_values (name, domain_id, value, type) VALUES (:name, :domainId, :value, :type)', [
                 'domainId' => $domainId,
-                'name' => 'feedDeliveryDaysForOutOfStockProducts',
-                'value' => -1,
+                'name' => 'luigisBoxRank',
+                'value' => 7,
                 'type' => 'integer',
             ]);
         }

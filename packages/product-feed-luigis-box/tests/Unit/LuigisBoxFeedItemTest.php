@@ -34,7 +34,7 @@ use Tests\FrameworkBundle\Test\IsMoneyEqual;
 
 class LuigisBoxFeedItemTest extends TestCase
 {
-    private const int MOCKED_SETTING_FEED_DELIVERY_DAYS_FOR_OUT_OF_STOCK_PRODUCTS = 8;
+    private const int MOCKED_LUIGIS_BOX_RANK_SETTING = 8;
     private const MAIN_CATEGORY_ID = 1;
     private const MAIN_CATEGORY_NAME = 'Main category';
     private const PRODUCT_IDENTITY = 'product-1';
@@ -170,7 +170,7 @@ class LuigisBoxFeedItemTest extends TestCase
 
         yield 'product is not available on stock' => [
             'productIsAvailableOnStock' => false,
-            'expectedRank' => self::MOCKED_SETTING_FEED_DELIVERY_DAYS_FOR_OUT_OF_STOCK_PRODUCTS,
+            'expectedRank' => self::MOCKED_LUIGIS_BOX_RANK_SETTING,
         ];
     }
 
@@ -268,7 +268,7 @@ class LuigisBoxFeedItemTest extends TestCase
         $productAvailabilityFacade->method('isProductAvailableOnDomainCached')->willReturn($isProductAvailableOnStock);
 
         $settingMock = $this->createMock(Setting::class);
-        $settingMock->method('getForDomain')->willReturn(self::MOCKED_SETTING_FEED_DELIVERY_DAYS_FOR_OUT_OF_STOCK_PRODUCTS);
+        $settingMock->method('getForDomain')->willReturn(self::MOCKED_LUIGIS_BOX_RANK_SETTING);
 
         $this->luigisBoxProductFeedItemFactory = new LuigisBoxProductFeedItemFactory(
             $this->productPriceCalculationForCustomerUserMock,
