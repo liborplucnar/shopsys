@@ -20,7 +20,6 @@ class ProductElasticsearchConverter
         $result['availability'] = $product['availability'] ?? '';
         $result['catnum'] = $product['catnum'] ?? '';
         $result['description'] = $product['description'] ?? '';
-        $result['detail_url'] = $product['detail_url'] ?? '';
         $result['ean'] = $product['ean'] ?? '';
         $result['name'] = $product['name'] ?? '';
         $result['partno'] = $product['partno'] ?? '';

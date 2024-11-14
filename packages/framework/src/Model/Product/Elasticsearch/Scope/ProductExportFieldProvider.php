@@ -31,7 +31,6 @@ class ProductExportFieldProvider
     public const string AVAILABILITY_DISPATCH_TIME = 'availability_dispatch_time';
     public const string IS_MAIN_VARIANT = 'is_main_variant';
     public const string IS_VARIANT = 'is_variant';
-    public const string DETAIL_URL = 'detail_url';
     public const string VISIBILITY = 'visibility';
     public const string UUID = 'uuid';
     public const string UNIT = 'unit';

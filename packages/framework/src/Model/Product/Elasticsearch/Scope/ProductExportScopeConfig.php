@@ -80,7 +80,6 @@ class ProductExportScopeConfig
             ProductExportFieldProvider::STOCK_QUANTITY,
         ]);
         $this->addNewExportScopeRule(self::SCOPE_URL, [
-            ProductExportFieldProvider::DETAIL_URL,
             ProductExportFieldProvider::HREFLANG_LINKS,
         ]);
         $this->addNewExportScopeRule(self::SCOPE_FLAGS, [
@@ -91,7 +90,6 @@ class ProductExportScopeConfig
         ]);
         $this->addNewExportScopeRule(self::SCOPE_NAME, [
             ProductExportFieldProvider::NAME,
-            ProductExportFieldProvider::DETAIL_URL,
             ProductExportFieldProvider::HREFLANG_LINKS,
         ], [
             self::PRECONDITION_VISIBILITY_RECALCULATION,

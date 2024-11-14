@@ -106,7 +106,6 @@ fragment TestProductFragment on Product {
     seoH1
     seoTitle
     seoMetaDescription
-    link
     unit {
         name
     }
@@ -174,7 +173,6 @@ fragment TestMainVariantFragment on MainVariant {
     seoH1
     seoTitle
     seoMetaDescription
-    link
     unit {
         name
     }

@@ -174,7 +174,6 @@ class ProductExportRepository
             ProductExportFieldProvider::AVAILABILITY_DISPATCH_TIME => $this->productAvailabilityFacade->getProductAvailabilityDaysByDomainId($product, $domainId),
             ProductExportFieldProvider::IS_MAIN_VARIANT => $product->isMainVariant(),
             ProductExportFieldProvider::IS_VARIANT => $product->isVariant(),
-            ProductExportFieldProvider::DETAIL_URL => $this->extractDetailUrl($domainId, $product),
             ProductExportFieldProvider::VISIBILITY => $this->extractVisibility($domainId, $product),
             ProductExportFieldProvider::UUID => $product->getUuid(),
             ProductExportFieldProvider::UNIT => $product->getUnit()->getName($locale),
@@ -206,22 +205,6 @@ class ProductExportRepository
         }
 
         return $variantIds;
-    }
-
-    /**
-     * @param int $domainId
-     * @param \Shopsys\FrameworkBundle\Model\Product\Product $product
-     * @return string
-     */
-    protected function extractDetailUrl(int $domainId, Product $product): string
-    {
-        $friendlyUrl = $this->friendlyUrlRepository->getMainFriendlyUrl(
-            $domainId,
-            'front_product_detail',
-            $product->getId(),
-        );
-
-        return $this->friendlyUrlFacade->getAbsoluteUrlByFriendlyUrl($friendlyUrl);
     }
 
     /**

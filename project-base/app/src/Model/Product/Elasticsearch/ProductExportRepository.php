@@ -40,7 +40,6 @@ use Shopsys\FrameworkBundle\Model\Seo\HreflangLinksFacade;
  * @property \App\Model\Product\ProductRepository $productRepository
  * @method array extractResult(\App\Model\Product\Product $product, int $domainId, string $locale, string[] $fields)
  * @method int[] extractVariantIds(\App\Model\Product\Product $product)
- * @method string extractDetailUrl(int $domainId, \App\Model\Product\Product $product)
  * @method int[] extractFlags(int $domainId, \App\Model\Product\Product $product)
  * @method int[] extractCategories(int $domainId, \App\Model\Product\Product $product)
  * @method array extractParameters(string $locale, \App\Model\Product\Product $product)

@@ -53,15 +53,6 @@ class ProductArrayFieldMapper
 
     /**
      * @param array $data
-     * @return string
-     */
-    public function getLink(array $data): string
-    {
-        return $data['detail_url'];
-    }
-
-    /**
-     * @param array $data
      * @return \Shopsys\FrameworkBundle\Model\Category\Category[]
      */
     public function getCategories(array $data): array

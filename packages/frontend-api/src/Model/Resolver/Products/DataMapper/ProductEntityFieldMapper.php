@@ -59,20 +59,6 @@ class ProductEntityFieldMapper
 
     /**
      * @param \Shopsys\FrameworkBundle\Model\Product\Product $product
-     * @return string
-     */
-    public function getLink(Product $product): string
-    {
-        $absoluteUrlsIndexedByProductId = $this->productCollectionFacade->getAbsoluteUrlsIndexedByProductId(
-            [$product->getId()],
-            $this->domain->getCurrentDomainConfig(),
-        );
-
-        return $absoluteUrlsIndexedByProductId[$product->getId()];
-    }
-
-    /**
-     * @param \Shopsys\FrameworkBundle\Model\Product\Product $product
      * @return \Shopsys\FrameworkBundle\Model\Category\Category[]
      */
     public function getCategories(Product $product): array

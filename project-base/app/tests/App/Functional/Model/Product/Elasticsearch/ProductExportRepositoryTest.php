@@ -60,7 +60,6 @@ class ProductExportRepositoryTest extends TransactionFunctionalTestCase
             'availability_dispatch_time',
             'is_main_variant',
             'is_variant',
-            'detail_url',
             'visibility',
             'product_type',
             'priority_by_product_type',

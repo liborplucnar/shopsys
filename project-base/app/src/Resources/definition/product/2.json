@@ -260,9 +260,6 @@
             "is_variant": {
                 "type": "boolean"
             },
-            "detail_url": {
-                "type": "text"
-            },
             "visibility": {
                 "type": "nested",
                 "properties": {
