@@ -4,9 +4,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 
-msgid "In stock"
+msgid "Luigi's Box rank"
 msgstr ""
 
-msgid "Out of stock"
+msgid "Luigi's Box settings"
+msgstr ""
+
+msgid "The value is used for availability_rank setting in Luigi's Box feed. See <a href=\"https://docs.luigisbox.com/indexing/feeds.html\">the docs</a> for more information."
 msgstr ""
 
