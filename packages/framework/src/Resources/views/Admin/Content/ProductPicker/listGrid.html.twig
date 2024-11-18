@@ -59,11 +59,14 @@
         ></i>
     {% elseif isMultiple %}
         <a
-            class="js-products-picker-window-add-product btn btn--light btn--plus btn--small"
+            class="{% if withPrice %}js-products-picker-with-price-window-add-product{% else %}js-products-picker-window-add-product{% endif %} btn btn--light btn--plus btn--small"
             href="#"
             data-product-picker-instance-id="{{ jsInstanceId }}"
             data-product-picker-product-id="{{ row.p.id }}"
             data-product-picker-product-name="{{ row.pt.name }}"
+            data-product-picker-product-price="{{ row.priceForProductList ? row.priceForProductList.amount|round(2) : 0 }}"
+            data-product-picker-product-ean="{{ row.p.ean }}"
+            data-product-picker-product-catnum="{{ row.p.catnum }}"
         >
             <i class="js-products-picker-icon btn__icon">+</i>
             <span class="js-products-picker-label">
@@ -77,6 +80,9 @@
             data-instance-id="{{ parentInstanceId }}"
             data-product-id="{{ row.p.id }}"
             data-product-name="{{ row.pt.name }}"
+            data-product-picker-product-price="{{ row.priceForProductList ? row.priceForProductList.amount|round(2) : 0 }}"
+            data-product-picker-product-ean="{{ row.p.ean }}"
+            data-product-picker-product-catnum="{{ row.p.catnum }}"
         >
             <i class="js-products-picker-icon btn__icon">+</i>
             <span class="js-products-picker-label">

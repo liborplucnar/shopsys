@@ -421,6 +421,9 @@ msgstr ""
 msgid "Basic information"
 msgstr ""
 
+msgid "Basic price"
+msgstr ""
+
 msgid "Batch ID"
 msgstr ""
 
@@ -617,6 +620,9 @@ msgid "Change for"
 msgstr ""
 
 msgid "Changes"
+msgstr ""
+
+msgid "Changing the domain will cause the loss of unsaved changes. Do you want to continue?"
 msgstr ""
 
 msgid "Choose"
@@ -1235,6 +1241,9 @@ msgid "Discount"
 msgstr ""
 
 msgid "Discount (%)"
+msgstr ""
+
+msgid "Discount against basic price"
 msgstr ""
 
 msgid "Discount type"
@@ -3847,6 +3856,9 @@ msgstr ""
 msgid "Sorting priority"
 msgstr ""
 
+msgid "Special price"
+msgstr ""
+
 msgid "Standard"
 msgstr ""
 
@@ -4528,6 +4540,9 @@ msgstr ""
 msgid "customers"
 msgstr ""
 
+msgid "discount"
+msgstr ""
+
 msgid "doesn't include"
 msgstr ""
 
@@ -4640,6 +4655,12 @@ msgid "units"
 msgstr ""
 
 msgid "unregistered customer"
+msgstr ""
+
+msgid "with VAT"
+msgstr ""
+
+msgid "without VAT"
 msgstr ""
 
 msgid "without positioning"

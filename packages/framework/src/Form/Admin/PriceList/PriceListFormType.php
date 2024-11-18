@@ -80,6 +80,10 @@ final class PriceListFormType extends AbstractType
                 'constraints' => [
                     new Constraints\NotBlank(['message' => 'Please enter valid to date']),
                 ],
+            ])
+            ->add('productsWithPrices', PriceListProductsPickerType::class, [
+                'required' => false,
+                'label' => t('Products'),
             ]);
 
         $builder->add('save', SubmitType::class);
@@ -134,6 +138,9 @@ final class PriceListFormType extends AbstractType
             $builder->add('domainId', DomainType::class, [
                 'required' => true,
                 'label' => t('Domain'),
+                'attr' => [
+                    'class' => 'js-update-domain-id',
+                ],
             ]);
         }
     }
