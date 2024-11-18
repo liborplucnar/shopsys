@@ -123,20 +123,23 @@ class Grid
     }
 
     /**
+     * TODO: Use OptionResolver instead of array
+     *
      * @param string $id
      * @param string $sourceColumnName
      * @param string $title
      * @param bool $sortable
+     * @param array{template?: string, help?: string }&array<string, mixed> $options
      * @return \Shopsys\FrameworkBundle\Component\Grid\Column
      */
-    public function addColumn($id, $sourceColumnName, $title, $sortable = false)
+    public function addColumn($id, $sourceColumnName, $title, $sortable = false, array $options = [])
     {
         if (array_key_exists($id, $this->columnsById)) {
             throw new DuplicateColumnIdException(
                 'Duplicate column id "' . $id . '" in grid "' . $this->id . '"',
             );
         }
-        $column = new Column($id, $sourceColumnName, $title, $sortable);
+        $column = new Column($id, $sourceColumnName, $title, $sortable, $options);
         $this->columnsById[$id] = $column;
 
         return $column;
