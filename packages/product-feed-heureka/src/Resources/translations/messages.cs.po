@@ -4,6 +4,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: cs\n"
 
+msgid "Heureka XML feed settings"
+msgstr "Nastavení XML feedu Heureka"
+
 msgid "Heureka category"
 msgstr "Heureka kategorie"
 
@@ -12,4 +15,10 @@ msgstr "XML feed Heureka.cz"
 
 msgid "Maximum price per click"
 msgstr "Maximální cena za proklik"
+
+msgid "Number of delivery days for out of stock products for Heureka XML feed"
+msgstr "Počet dní k doručení neskladových položek pro XML feed Heureka"
+
+msgid "The value is used for DELIVERY_DATE setting in Heureka XML feed. See <a href=\"https://sluzby.heureka.cz/napoveda/xml-feed/#DELIVERY_DATE\">the docs</a> for more information."
+msgstr "Hodnota se používá pro nastavení DELIVERY_DATE v XML feedu Heureka. Pro více info vizte <a href=\"https://sluzby.heureka.cz/napoveda/xml-feed/#DELIVERY_DATE\">dokumentaci</a>."
 

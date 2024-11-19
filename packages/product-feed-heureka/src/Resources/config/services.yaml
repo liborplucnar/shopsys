@@ -16,6 +16,10 @@ services:
         tags:
             - { name: shopsys.crud_extension, type: category }
 
+    Shopsys\ProductFeed\HeurekaBundle\Form\HeurekaFeedSettingCrudExtension:
+        tags:
+            - { name: shopsys.crud_extension, type: stockSettings }
+
     Shopsys\ProductFeed\HeurekaBundle\Form\HeurekaProductCrudExtension:
         tags:
             - { name: shopsys.crud_extension, type: product }

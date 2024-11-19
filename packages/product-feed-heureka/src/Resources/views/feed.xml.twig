@@ -19,9 +19,7 @@
         {% if item.ean -%}
             <EAN>{{ item.ean }}</EAN>
         {% endif -%}
-        {% if item.deliveryDate is not null -%}
-            <DELIVERY_DATE>{{ item.deliveryDate }}</DELIVERY_DATE>
-        {% endif -%}
+        <DELIVERY_DATE>{{ item.deliveryDate }}</DELIVERY_DATE>
         {% if item.manufacturer is not null -%}
             <MANUFACTURER>{{ item.manufacturer }}</MANUFACTURER>
         {% endif -%}
