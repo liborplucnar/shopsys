@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopsys\AdministrationBundle\Migrations;
+namespace Shopsys\FrameworkBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Shopsys\MigrationBundle\Component\Doctrine\Migrations\AbstractMigration;
