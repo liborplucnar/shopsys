@@ -93,7 +93,7 @@ export const ProductListItem = forwardRef<HTMLLIElement, ProductItemProps>(
                 )}
 
                 <ExtendedNextLink
-                    className="flex select-text flex-col gap-2.5 px-2.5 py-5 text-text no-underline hover:text-link hover:no-underline sm:px-5 sm:pb-0"
+                    className="flex select-text flex-col py-5 text-text no-underline hover:text-link hover:no-underline sm:pb-0"
                     draggable={false}
                     href={product.slug}
                     type={product.isMainVariant ? 'productMainVariant' : 'product'}
@@ -109,29 +109,31 @@ export const ProductListItem = forwardRef<HTMLLIElement, ProductItemProps>(
                         onClick?.(product, listIndex);
                     }}
                 >
-                    <ProductListItemImage product={product} size={size} visibleItemsConfig={visibleItemsConfig} />
+                    <div className="flex flex-col gap-2.5 px-2.5 sm:px-5">
+                        <ProductListItemImage product={product} size={size} visibleItemsConfig={visibleItemsConfig} />
 
-                    <div className="line-clamp-3 min-h-[3.75rem] font-secondary text-sm font-semibold group-hover:text-link group-hover:underline">
-                        {product.fullName}
-                    </div>
+                        <div className="line-clamp-3 min-h-[3.75rem] font-secondary text-sm font-semibold group-hover:text-link group-hover:underline">
+                            {product.fullName}
+                        </div>
 
-                    <div className="min-h-6 sm:min-h-7">
-                        {visibleItemsConfig.price && !(product.isMainVariant && product.isSellingDenied) && (
-                            <ProductPrice
-                                isPriceFromVisible={visibleItemsConfig.priceFromWord}
-                                productPrice={product.price}
+                        <div className="min-h-6 sm:min-h-7">
+                            {visibleItemsConfig.price && !(product.isMainVariant && product.isSellingDenied) && (
+                                <ProductPrice
+                                    isPriceFromVisible={visibleItemsConfig.priceFromWord}
+                                    productPrice={product.price}
+                                />
+                            )}
+                        </div>
+
+                        {visibleItemsConfig.storeAvailability && (
+                            <ProductAvailability
+                                availability={product.availability}
+                                availableStoresCount={product.availableStoresCount}
+                                className="min-h-10 xs:min-h-[60px] sm:min-h-10"
+                                isInquiryType={product.isInquiryType}
                             />
                         )}
                     </div>
-
-                    {visibleItemsConfig.storeAvailability && (
-                        <ProductAvailability
-                            availability={product.availability}
-                            availableStoresCount={product.availableStoresCount}
-                            className="min-h-10 xs:min-h-[60px] sm:min-h-10"
-                            isInquiryType={product.isInquiryType}
-                        />
-                    )}
                 </ExtendedNextLink>
 
                 <div className="flex w-full items-center justify-between gap-1 px-2.5 py-5 sm:justify-normal sm:gap-2.5 sm:px-5 sm:py-0">
