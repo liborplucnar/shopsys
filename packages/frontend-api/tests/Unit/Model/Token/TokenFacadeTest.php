@@ -125,13 +125,16 @@ class TokenFacadeTest extends TestCase
         $domain = $this->createDomain();
 
         $customerUserFacade = $this->createMock(CustomerUserFacade::class);
-
-        $jwtConfiguration = $this->createJwtConfiguration();
+        $jwtConfigurationFactory = $this->getMockBuilder(JwtConfigurationFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $jwtConfigurationFactory->method('create')
+            ->willReturn($this->createJwtConfiguration());
 
         return new TokenFacade(
             $domain,
             $customerUserFacade,
-            $jwtConfiguration,
+            $jwtConfigurationFactory,
         );
     }
 

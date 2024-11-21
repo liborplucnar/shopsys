@@ -14,6 +14,8 @@ class JwtConfigurationFactory
 {
     protected const FRONTEND_API_KEYS_FILEPATH_PARAMETER = 'shopsys.frontend_api.keys_filepath';
 
+    protected Configuration $configuration;
+
     /**
      * @param \Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface $parameterBag
      * @param \Shopsys\FrameworkBundle\Component\Domain\Domain $domain
@@ -29,15 +31,23 @@ class JwtConfigurationFactory
      */
     public function create(): Configuration
     {
-        if (!$this->parameterBag->has(static::FRONTEND_API_KEYS_FILEPATH_PARAMETER)) {
-            return Configuration::forUnsecuredSigner();
+        if (isset($this->configuration)) {
+            return $this->configuration;
         }
 
-        return Configuration::forAsymmetricSigner(
+        if (!$this->parameterBag->has(static::FRONTEND_API_KEYS_FILEPATH_PARAMETER)) {
+            $this->configuration = Configuration::forUnsecuredSigner();
+
+            return $this->configuration;
+        }
+
+        $this->configuration = Configuration::forAsymmetricSigner(
             $this->getSigner(),
             $this->getPrivateKey(),
             $this->getPublicKey(),
         );
+
+        return $this->configuration;
     }
 
     /**
