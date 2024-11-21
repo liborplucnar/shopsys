@@ -125,7 +125,8 @@ jobs:
             (
                 github.event.pull_request.head.repo.full_name == 'shopsys/shopsys' ||
                 github.ref_protected == true
-            )
+            ) &&
+            needs.variables.outputs.DOCKER_PHP_FPM_REPOSITORY_TAG != ''
         name: Build PHP-FPM image
         runs-on: ubuntu-22.04
         needs: variables
@@ -419,32 +420,42 @@ jobs:
             (needs.build-storefront-image.result == 'success' || needs.build-storefront-image.result == 'skipped') &&
             (needs.build-elasticsearch-image.result == 'success' || needs.build-elasticsearch-image.result == 'skipped')
         runs-on: ubuntu-22.04
+        strategy:
+            matrix:
+                group: [ authentication, cart, order, transportAndPayment, visits, others ]
         env:
             GH_TOKEN: ${{ github.token }}
         steps:
             -   name: Check pull request labels
+                id: check-labels
                 run: |
-                    if [ -n "${{ github.event.pull_request.number }}" ]; then
-                        PULL_REQUEST_LABELS=`gh api -H "Accept: application/vnd.github+json" /repos/shopsys/shopsys/issues/${{ github.event.pull_request.number }}/labels | jq '[.[].name]'`
-                        if echo "$PULL_REQUEST_LABELS" | jq -e '. | index("regenerate screenshots")' >/dev/null; then
-                            exit 1;
-                        fi
+                    PULL_REQUEST_LABELS=`gh api -H "Accept: application/vnd.github+json" /repos/shopsys/shopsys/issues/${{ github.event.pull_request.number }}/labels | jq '[.[].name]'`
+                    if echo "$PULL_REQUEST_LABELS" | jq -e '. | index("regenerate screenshots")' >/dev/null; then
+                        echo "SHOULD_RUN_TESTS=false" >> $GITHUB_ENV
+                    else
+                        echo "SHOULD_RUN_TESTS=true" >> $GITHUB_ENV
                     fi
             -   name: GIT checkout branch - ${{ github.ref }}
+                if: env.SHOULD_RUN_TESTS == 'true'
                 uses: actions/checkout@v4
                 with:
                     ref: ${{ github.ref }}
             -   name: Download docker-compose.cypress.yml from artifacts
+                if: env.SHOULD_RUN_TESTS == 'true'
                 uses: actions/download-artifact@v4
                 with:
                     name: docker-compose-cypress
             -   name: Build application
+                if: env.SHOULD_RUN_TESTS == 'true'
                 run: |
                     mv docker-compose.cypress.yml docker-compose.yml
                     docker compose up -d --wait
                     docker compose exec php-fpm php phing -D production.confirm.action=y db-create frontend-api-generate-new-keys build-demo-dev-quick error-pages-generate elasticsearch-index-recreate elasticsearch-export
-            -   name: Run Cypress tests
+            -   name: Run Cypress tests for ${{ matrix.group }}
+                if: env.SHOULD_RUN_TESTS == 'true'
                 run: docker compose run cypress
+                env:
+                    GROUP: ${{ matrix.group }}
             -   name: Upload Cypress videos to artifacts
                 if: ${{ failure() }}
                 uses: actions/upload-artifact@v4
@@ -476,7 +487,7 @@ jobs:
                 if: ${{ failure() }}
                 run: docker compose logs cypress
     tests-storefront-acceptance-regenerate:
-        name: Regenerate Cypress snapshots
+        name: Reg. Cypress tests
         needs: [variables, build-php-fpm-image, build-storefront-image, build-elasticsearch-image]
         if: |
             always() && !failure() && !cancelled() &&
@@ -488,49 +499,64 @@ jobs:
             (needs.build-storefront-image.result == 'success' || needs.build-storefront-image.result == 'skipped') &&
             (needs.build-elasticsearch-image.result == 'success' || needs.build-elasticsearch-image.result == 'skipped')
         runs-on: ubuntu-22.04
+        strategy:
+            matrix:
+                group: [ authentication, cart, order, transportAndPayment, visits, others ]
         env:
             GH_TOKEN: ${{ github.token }}
         steps:
             -   name: Check pull request labels
+                id: check-labels
                 run: |
                     PULL_REQUEST_LABELS=`gh api -H "Accept: application/vnd.github+json" /repos/shopsys/shopsys/issues/${{ github.event.pull_request.number }}/labels | jq '[.[].name]'`
                     if ! echo "$PULL_REQUEST_LABELS" | jq -e '. | index("regenerate screenshots")' >/dev/null; then
-                        exit 1;
+                        echo "SHOULD_RUN_TESTS_REGENERATE=false" >> $GITHUB_ENV
+                    else
+                        echo "SHOULD_RUN_TESTS_REGENERATE=true" >> $GITHUB_ENV
                     fi
             -   name: GIT checkout branch - ${{ github.head_ref }}
+                if: env.SHOULD_RUN_TESTS_REGENERATE == 'true'
                 uses: actions/checkout@v4
                 with:
                     ref: ${{ github.head_ref }}
             -   name: Download docker-compose.cypress.yml from artifacts
+                if: env.SHOULD_RUN_TESTS_REGENERATE == 'true'
                 uses: actions/download-artifact@v4
                 with:
                     name: docker-compose-cypress
             -   name: Build application
+                if: env.SHOULD_RUN_TESTS_REGENERATE == 'true'
                 run: |
                     mv docker-compose.cypress.yml docker-compose.yml
                     docker compose up -d --wait
                     docker compose exec php-fpm php phing -D production.confirm.action=y db-create frontend-api-generate-new-keys build-demo-dev-quick error-pages-generate elasticsearch-index-recreate elasticsearch-export
-            -   name: Run Cypress tests
+            -   name: Run regenerate Cypress tests for ${{ matrix.group }}
+                if: env.SHOULD_RUN_TESTS_REGENERATE == 'true'
                 run: |
                     docker compose run cypress-regenerate
-            -   name: Commit generated snapshots
+                env:
+                    GROUP: ${{ matrix.group }}
+            -   name: Commit generated snapshots for ${{ matrix.group }}
+                if: env.SHOULD_RUN_TESTS_REGENERATE == 'true'
+                id: commit-snapshots
                 run: |
                     cp -rf snapshots/* project-base/storefront/cypress/snapshots/
                     git config --global user.name 'ShopsysBot'
                     git config --global user.email 'shopsysbot@users.noreply.github.com'
                     git add project-base/storefront/cypress/snapshots/e2e
-                    git commit -m "regenerate screenshots"
-            -   name: Remove "regenerate screenshots" label
+                    if ! git diff --cached --quiet; then
+                        git commit -m "regenerate screenshots for ${{ matrix.group }}"
+                    else
+                        echo "No changes to commit."
+                    fi
+            -   name: Push changes for ${{ matrix.group }}
+                if: env.SHOULD_RUN_TESTS_REGENERATE == 'true'
                 run: |
-                    gh api \
-                        --method DELETE \
-                        -H "Accept: application/vnd.github+json" \
-                        -H "X-GitHub-Api-Version: 2022-11-28" \
-                        /repos/shopsys/shopsys/issues/${{ github.event.pull_request.number }}/labels/regenerate%20screenshots
-            -   name: Push changes
-                uses: ad-m/github-push-action@master
-                with:
-                    branch: ${{ github.head_ref }}
+                    git config --global user.name 'ShopsysBot'
+                    git config --global user.email 'shopsysbot@users.noreply.github.com'
+                    git fetch origin
+                    git rebase origin/${{ github.head_ref }}
+                    git push origin ${{ github.head_ref }} --force-with-lease
             -   name: PHP-FPM container logs
                 if: ${{ failure() }}
                 run: docker compose logs php-fpm
@@ -543,6 +569,34 @@ jobs:
             -   name: Cypress container logs
                 if: ${{ failure() }}
                 run: docker compose logs cypress
+    tests-storefront-acceptance-regenerate-remove-label:
+        name: Remove "regenerate screenshots" label
+        needs: tests-storefront-acceptance-regenerate
+        if: |
+            always() && 
+            !failure() && 
+            !cancelled()
+        runs-on: ubuntu-22.04
+        env:
+            GH_TOKEN: ${{ github.token }}
+        steps:
+            -   name: Check pull request labels
+                id: check-labels
+                run: |
+                    PULL_REQUEST_LABELS=`gh api -H "Accept: application/vnd.github+json" /repos/shopsys/shopsys/issues/${{ github.event.pull_request.number }}/labels | jq '[.[].name]'`
+                    if ! echo "$PULL_REQUEST_LABELS" | jq -e '. | index("regenerate screenshots")' >/dev/null; then
+                        echo "SHOULD_RUN_REMOVE_REGENERATE_LABEL=false" >> $GITHUB_ENV
+                    else
+                        echo "SHOULD_RUN_REMOVE_REGENERATE_LABEL=true" >> $GITHUB_ENV
+                    fi
+            -   name: Remove "regenerate screenshots" label
+                if: env.SHOULD_RUN_REMOVE_REGENERATE_LABEL == 'true'
+                run: |
+                    gh api \
+                        --method DELETE \
+                        -H "Accept: application/vnd.github+json" \
+                        -H "X-GitHub-Api-Version: 2022-11-28" \
+                        /repos/shopsys/shopsys/issues/${{ github.event.pull_request.number }}/labels/regenerate%20screenshots
     translations-dump-check:
         name: Check all translations are dumped
         needs: build-php-fpm-image
@@ -857,7 +911,8 @@ jobs:
                           - https://cz.${{ needs.variables.outputs.BRANCH_NAME_ESCAPED }}.${{ vars.REVIEW_STAGE_URL }}
                     delete-previous-comment: false
     build-successful:
-        if: ${{ always() }}
+        if: |
+            always()
         name: Build successful
         needs: [tests-acceptance, standards, tests-unit-functional-smoke, standards-storefront, translations-dump-check, review, build-fork-docker-images, check-console-commands, tests-storefront-acceptance, tests-storefront-acceptance-regenerate, unit-test-storefront]
         runs-on: ubuntu-22.04
@@ -871,8 +926,8 @@ jobs:
             REVIEW_RESULT: ${{ needs.review.result }}
             CHECK_CONSOLE_COMMANDS_RESULT: ${{ needs.check-console-commands.result }}
             TESTS_STOREFRONT_ACCEPTANCE_RESULT: ${{ needs.tests-storefront-acceptance.result }}
-            TESTS_STOREFRONT_REGENERATE_RESULT: ${{ needs.tests-storefront-acceptance-regenerate.result }}
             UNIT_TESTS_STOREFRONT_RESULT: ${{ needs.unit-test-storefront.result }}
+            TESTS_STOREFRONT_ACCEPTANCE_REGENERATE_RESULT: ${{ needs.tests-storefront-acceptance-regenerate.result }}
         steps:
             -   name: GIT checkout branch - ${{ github.ref }}
                 uses: actions/checkout@v4
@@ -880,5 +935,5 @@ jobs:
                     ref: ${{ github.ref }}
             -   name: Build successful
                 run: |
-                    EXIT_CODE=`. .github/get-build-exit-code.sh && getBuildExitCodeBasedOnJobResults ${BUILD_FORK_RESULT} ${STANDARDS_RESULT} ${TESTS_RESULT} ${TESTS_ACCEPTANCE_RESULT} ${STANDARDS_STOREFRONT_RESULT} ${TRANSLATIONS_DUMP_RESULT} ${REVIEW_RESULT} ${CHECK_CONSOLE_COMMANDS_RESULT} ${TESTS_STOREFRONT_ACCEPTANCE_RESULT} ${TESTS_STOREFRONT_REGENERATE_RESULT} ${UNIT_TESTS_STOREFRONT_RESULT} > /dev/null ; echo $?`
+                    EXIT_CODE=`. .github/get-build-exit-code.sh && getBuildExitCodeBasedOnJobResults ${BUILD_FORK_RESULT} ${STANDARDS_RESULT} ${TESTS_RESULT} ${TESTS_ACCEPTANCE_RESULT} ${STANDARDS_STOREFRONT_RESULT} ${TRANSLATIONS_DUMP_RESULT} ${REVIEW_RESULT} ${CHECK_CONSOLE_COMMANDS_RESULT} ${TESTS_STOREFRONT_ACCEPTANCE_RESULT} ${UNIT_TESTS_STOREFRONT_RESULT} ${TESTS_STOREFRONT_ACCEPTANCE_REGENERATE_RESULT} > /dev/null ; echo $?`
                     exit "${EXIT_CODE}"
