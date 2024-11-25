@@ -59,6 +59,15 @@ parameters:
             # in fact, anything can be passed to the load function, it just has a bad annotation
             message: '#^Parameter \#1 \$key of method Overblog\\DataLoader\\DataLoaderInterface::load\(\) expects string#'
             path: %currentWorkingDirectory%/*
+        -
+            message: '#^Service "twig" is private.#'
+            path: %currentWorkingDirectory%/packages/framework/src/Component/FlashMessage/FlashMessageTrait.php
+        -
+            message: '#^Service "test.service_container" is not registered in the container.#'
+            path: %currentWorkingDirectory%/packages/http-smoke-testing/src/HttpSmokeTestCase.php
+        -
+            message: '#^Service "Symfony\\Component\\HttpFoundation\\RequestStack" is private.#'
+            path: %currentWorkingDirectory%/packages/http-smoke-testing/src/HttpSmokeTestCase.php
     excludePaths:
         # Exclude coding standards from packages as it is in incompatible version
         - %currentWorkingDirectory%/packages/coding-standards/*

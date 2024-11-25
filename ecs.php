@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use PHP_CodeSniffer\Standards\Generic\Sniffs\CodeAnalysis\AssignmentInConditionSniff;
 use PHP_CodeSniffer\Standards\Generic\Sniffs\Metrics\CyclomaticComplexitySniff;
 use PHP_CodeSniffer\Standards\Generic\Sniffs\NamingConventions\CamelCapsFunctionNameSniff;
 use PHP_CodeSniffer\Standards\Squiz\Sniffs\NamingConventions\ValidVariableNameSniff as PhpCsValidVariableNameSniff;
+use PHP_CodeSniffer\Standards\Squiz\Sniffs\PHP\DisallowMultipleAssignmentsSniff;
 use PhpCsFixer\Fixer\FunctionNotation\PhpdocToPropertyTypeFixer;
 use Shopsys\CodingStandards\CsFixer\ForbiddenPrivateVisibilityFixer;
 use Shopsys\CodingStandards\Helper\CyclomaticComplexitySniffSetting;
@@ -91,6 +93,9 @@ return ECSConfig::configure()
             __DIR__ . '/packages/coding-standards/tests/Unit/**/correct/*',
             __DIR__ . '/packages/coding-standards/tests/Unit/**/Correct/*',
             __DIR__ . '/packages/coding-standards/tests/Unit/**/fixed/*',
+            AssignmentInConditionSniff::class => [
+                __DIR__ . '/project-base/app/src/Kernel.php',
+            ],
             CamelCapsFunctionNameSniff::class => [
                 __DIR__ . '/packages/framework/src/Component/Doctrine/MoneyType.php',
                 __DIR__ . '/packages/framework/src/Component/EntityExtension/QueryBuilder.php',
@@ -107,6 +112,9 @@ return ECSConfig::configure()
                 __DIR__ . '/packages/framework/src/Model/Blog/Article/Elasticsearch/BlogArticleElasticsearchDataFetcher.php',
                 __DIR__ . '/packages/framework/src/Model/Product/Elasticsearch/ProductExportRepository.php',
                 __DIR__ . '/packages/framework/src/Model/Product/Search/ProductElasticsearchConverter.php',
+            ],
+            DisallowMultipleAssignmentsSniff::class => [
+                __DIR__ . '/project-base/app/src/Kernel.php',
             ],
             EarlyExitSniff::class => [
                 __DIR__ . '/packages/framework/src/Migrations/Version*.php',
