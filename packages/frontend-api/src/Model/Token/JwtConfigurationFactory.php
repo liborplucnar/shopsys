@@ -35,11 +35,11 @@ class JwtConfigurationFactory
             return $this->configuration;
         }
 
-        if (!$this->parameterBag->has(static::FRONTEND_API_KEYS_FILEPATH_PARAMETER)) {
-            $this->configuration = Configuration::forUnsecuredSigner();
-
-            return $this->configuration;
-        }
+//        if (!$this->parameterBag->has(static::FRONTEND_API_KEYS_FILEPATH_PARAMETER)) {
+//            $this->configuration = Configuration::forUnsecuredSigner();
+//
+//            return $this->configuration;
+//        }
 
         $this->configuration = Configuration::forAsymmetricSigner(
             $this->getSigner(),
