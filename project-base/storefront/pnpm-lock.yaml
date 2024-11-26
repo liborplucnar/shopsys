@@ -209,7 +209,7 @@ importers:
         version: 1.1.0(graphql@16.8.1)
       '@vitejs/plugin-react':
         specifier: ~4.2.1
-        version: 4.2.1(vite@4.5.3(@types/node@20.11.16))
+        version: 4.2.1(vite@4.5.5(@types/node@20.11.16))
       autoprefixer:
         specifier: ~10.4.17
         version: 10.4.17(postcss@8.4.34)
@@ -260,7 +260,7 @@ importers:
         version: 5.3.3
       vite-tsconfig-paths:
         specifier: ~4.3.1
-        version: 4.3.1(typescript@5.3.3)(vite@4.5.3(@types/node@20.11.16))
+        version: 4.3.1(typescript@5.3.3)(vite@4.5.5(@types/node@20.11.16))
       vitest:
         specifier: ~0.33.0
         version: 0.33.0(jsdom@24.0.0)
@@ -4636,8 +4636,8 @@ packages:
       vite:
         optional: true
 
-  vite@4.5.3:
-    resolution: {integrity: sha512-kQL23kMeX92v3ph7IauVkXkikdDRsYMGTVl5KY2E9OY4ONLvkHf04MDTbnfo6NKxZiDLWzVpP5oTa8hQD8U3dg==}
+  vite@4.5.5:
+    resolution: {integrity: sha512-ifW3Lb2sMdX+WU91s3R0FyQlAyLxOzCSCP37ujw0+r5POeHPwe6udWVIElKQq8gk3t7b8rkmvqC6IHBpCff4GQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -6661,14 +6661,14 @@ snapshots:
     dependencies:
       graphql: 16.8.1
 
-  '@vitejs/plugin-react@4.2.1(vite@4.5.3(@types/node@20.11.16))':
+  '@vitejs/plugin-react@4.2.1(vite@4.5.5(@types/node@20.11.16))':
     dependencies:
       '@babel/core': 7.23.9
       '@babel/plugin-transform-react-jsx-self': 7.23.3(@babel/core@7.23.9)
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.9)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 4.5.3(@types/node@20.11.16)
+      vite: 4.5.5(@types/node@20.11.16)
     transitivePeerDependencies:
       - supports-color
 
@@ -9915,7 +9915,7 @@ snapshots:
       mlly: 1.5.0
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 4.5.3(@types/node@20.11.16)
+      vite: 4.5.5(@types/node@20.11.16)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -9926,18 +9926,18 @@ snapshots:
       - supports-color
       - terser
 
-  vite-tsconfig-paths@4.3.1(typescript@5.3.3)(vite@4.5.3(@types/node@20.11.16)):
+  vite-tsconfig-paths@4.3.1(typescript@5.3.3)(vite@4.5.5(@types/node@20.11.16)):
     dependencies:
       debug: 4.3.4
       globrex: 0.1.2
       tsconfck: 3.0.2(typescript@5.3.3)
     optionalDependencies:
-      vite: 4.5.3(@types/node@20.11.16)
+      vite: 4.5.5(@types/node@20.11.16)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@4.5.3(@types/node@20.11.16):
+  vite@4.5.5(@types/node@20.11.16):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.34
@@ -9969,7 +9969,7 @@ snapshots:
       strip-literal: 1.3.0
       tinybench: 2.6.0
       tinypool: 0.6.0
-      vite: 4.5.3(@types/node@20.11.16)
+      vite: 4.5.5(@types/node@20.11.16)
       vite-node: 0.33.0(@types/node@20.11.16)
       why-is-node-running: 2.2.2
     optionalDependencies:
