@@ -4,6 +4,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: cs\n"
 
-msgid "Enter an integer, please"
-msgstr "Zadejte celé číslo, prosím"
+msgid "Please enter the Luigi's Box rank."
+msgstr "Zadejte prosím Luigi's Box rank"
 

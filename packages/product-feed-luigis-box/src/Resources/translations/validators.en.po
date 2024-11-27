@@ -4,6 +4,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 
-msgid "Enter an integer, please"
+msgid "Please enter the Luigi's Box rank."
 msgstr ""
 
