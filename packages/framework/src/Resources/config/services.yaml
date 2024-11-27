@@ -1129,3 +1129,7 @@ services:
     Shopsys\FrameworkBundle\Model\Transport\TransportTypeProvider:
         arguments:
             $transportTypeEnums: !tagged shopsys.transport_type_enum
+
+    Shopsys\FrameworkBundle\Model\Payment\PaymentTypeProvider:
+        arguments:
+            $paymentTypeEnums: !tagged shopsys.payment_type_enum
