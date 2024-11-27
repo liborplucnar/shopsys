@@ -11854,7 +11854,19 @@ One of the possible methods of the transport type
 <td></td>
 </tr>
 <tr>
+<td valign="top"><strong>convertim_cash_on_delivery</strong></td>
+<td></td>
+</tr>
+<tr>
 <td valign="top"><strong>convertim_comgate</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>convertim_essox</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>convertim_paypal</strong></td>
 <td></td>
 </tr>
 <tr>

@@ -2119,7 +2119,10 @@ export type TypePaymentSetupCreationData = {
 export enum TypePaymentTypeEnum {
   Basic = 'basic',
   ConvertimAdyen = 'convertim_adyen',
+  ConvertimCashOnDelivery = 'convertim_cash_on_delivery',
   ConvertimComgate = 'convertim_comgate',
+  ConvertimEssox = 'convertim_essox',
+  ConvertimPaypal = 'convertim_paypal',
   ConvertimQr = 'convertim_qr',
   ConvertimStripe = 'convertim_stripe',
   ConvertimTrustpay = 'convertim_trustpay',

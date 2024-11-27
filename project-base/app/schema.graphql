@@ -1688,7 +1688,10 @@ type PaymentSetupCreationData {
 enum PaymentTypeEnum {
   basic
   convertim_adyen
+  convertim_cash_on_delivery
   convertim_comgate
+  convertim_essox
+  convertim_paypal
   convertim_qr
   convertim_stripe
   convertim_trustpay
