@@ -11,6 +11,7 @@ use Shopsys\FrameworkBundle\Component\Grid\InlineEdit\GridInlineEditInterface;
 use Shopsys\FrameworkBundle\Component\HttpFoundation\TransactionalMasterRequestConditionProviderInterface;
 use Shopsys\FrameworkBundle\Component\Router\FriendlyUrl\FriendlyUrlDataProviderInterface;
 use Shopsys\FrameworkBundle\Model\Order\Processing\OrderProcessingStack;
+use Shopsys\FrameworkBundle\Model\Transport\AbstractTransportTypeEnum;
 use Shopsys\FrameworkBundle\Twig\NoVarDumperExtension;
 use Shopsys\FrameworkBundle\Twig\VarDumperExtension;
 use Symfony\Component\Config\FileLocator;
@@ -58,6 +59,9 @@ class ShopsysFrameworkExtension extends Extension implements PrependExtensionInt
 
         $container->registerForAutoconfiguration(DataTypeResolverInterface::class)
             ->addTag('shopsys.data_type_resolver');
+
+        $container->registerForAutoconfiguration(AbstractTransportTypeEnum::class)
+            ->addTag('shopsys.transport_type_enum');
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
