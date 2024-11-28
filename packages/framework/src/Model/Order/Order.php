@@ -359,6 +359,12 @@ class Order
     protected $customer;
 
     /**
+     * @var bool|null
+     * @ORM\Column(type="boolean")
+     */
+    protected $freeTransportAndPaymentApplied;
+
+    /**
      * @param \Shopsys\FrameworkBundle\Model\Order\OrderData $orderData
      * @param string $orderNumber
      * @param string $urlHash
@@ -488,6 +494,14 @@ class Order
     }
 
     /**
+     * @return bool
+     */
+    public function isFreeTransportAndPaymentApplied()
+    {
+        return $this->freeTransportAndPaymentApplied;
+    }
+
+    /**
      * @param \Shopsys\FrameworkBundle\Model\Order\OrderData $orderData
      */
     protected function editData(OrderData $orderData): void
@@ -530,6 +544,7 @@ class Order
         $this->setDeliveryAddress($orderData);
 
         $this->promoCode = $orderData->promoCode;
+        $this->freeTransportAndPaymentApplied = $orderData->freeTransportAndPaymentApplied;
     }
 
     /**
