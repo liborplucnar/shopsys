@@ -46,7 +46,7 @@ class ProductPriceQuery extends AbstractQuery
         }
 
         if ($data instanceof Product) {
-            $basicProductPrice = $this->productCachedAttributesFacade->getProductSellingPrice($data);
+            $basicProductPrice = $this->productCachedAttributesFacade->getProductBasicPrice($data);
             $specialPrice = $this->specialPriceFacade->getEffectiveSpecialPrice($data, $this->domain->getId());
         } else {
             $basicProductPrice = $this->priceFacade->createProductPriceFromArrayForCurrentCustomer($data['prices']);
