@@ -6,6 +6,7 @@ namespace Shopsys\FrontendApiBundle\Model\Resolver\Price;
 
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Shopsys\FrameworkBundle\Model\Product\Pricing\ProductPrice;
+use Shopsys\FrontendApiBundle\Model\Price\PriceInfo;
 
 class ProductPriceResolverMap extends ResolverMap
 {
@@ -16,7 +17,11 @@ class ProductPriceResolverMap extends ResolverMap
     {
         return [
             'ProductPrice' => [
-                'isPriceFrom' => function (ProductPrice $productPrice) {
+                'isPriceFrom' => function (ProductPrice|PriceInfo $productPrice) {
+                    if ($productPrice instanceof PriceInfo) {
+                        return $productPrice->priceFrom;
+                    }
+
                     return $productPrice->isPriceFrom();
                 },
             ],

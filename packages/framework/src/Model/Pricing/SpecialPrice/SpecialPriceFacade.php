@@ -21,6 +21,29 @@ class SpecialPriceFacade
     /**
      * @param \Shopsys\FrameworkBundle\Model\Product\Product $product
      * @param int $domainId
+     * @return \Shopsys\FrameworkBundle\Model\Pricing\SpecialPrice\SpecialPrice|null
+     */
+    public function getEffectiveSpecialPrice(Product $product, int $domainId): ?SpecialPrice
+    {
+        $effectiveSpecialPrice = $this->specialPriceRepository->getEffectiveSpecialPrice($product, $domainId);
+
+        if ($effectiveSpecialPrice === null) {
+            return null;
+        }
+
+        return $this->specialPriceFactory->createWithCalculations(
+            $effectiveSpecialPrice['validFrom'],
+            $effectiveSpecialPrice['validTo'],
+            $effectiveSpecialPrice['priceAmount'],
+            $domainId,
+            $product->getVatForDomain($domainId),
+            $effectiveSpecialPrice['productId'],
+        );
+    }
+
+    /**
+     * @param \Shopsys\FrameworkBundle\Model\Product\Product $product
+     * @param int $domainId
      * @param int[] $variantIds
      * @return \Shopsys\FrameworkBundle\Model\Pricing\SpecialPrice\SpecialPrice[]
      */
