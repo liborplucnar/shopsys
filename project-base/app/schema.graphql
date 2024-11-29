@@ -1654,6 +1654,8 @@ scalar Password
 type Payment {
   "Localized payment description (domain dependent)"
   description: String
+  "Should be displayed in cart (is used for payments, that might be needed to return for example to the Convertim, but are not supposed to be displayed in cart)"
+  displayInCart: Boolean!
   "Additional data for GoPay payment"
   goPayPaymentMethod: GoPayPaymentMethod
   "Payment images"
@@ -1669,9 +1671,9 @@ type Payment {
   "Payment price"
   price(cartUuid: Uuid = null): Price!
   "List of assigned transports"
-  transports: [Transport!]!
+  transports(displayInCartOnly: Boolean = true): [Transport!]!
   "Type of payment"
-  type: String!
+  type: PaymentTypeEnum!
   "UUID"
   uuid: Uuid!
   vat: Vat!
@@ -1680,6 +1682,17 @@ type Payment {
 type PaymentSetupCreationData {
   "Identifiers of GoPay payment method"
   goPayCreatePaymentSetup: GoPayCreatePaymentSetup
+}
+
+"One of the possible methods of the transport type"
+enum PaymentTypeEnum {
+  basic
+  convertim_adyen
+  convertim_comgate
+  convertim_qr
+  convertim_stripe
+  convertim_trustpay
+  goPay
 }
 
 type PersonalData {
@@ -2058,7 +2071,7 @@ type Query {
   "Returns payment filtered using UUID"
   payment(uuid: Uuid!): Payment
   "Returns complete list of payment methods"
-  payments: [Payment!]!
+  payments(displayInCartOnly: Boolean = true): [Payment!]!
   "Return personal data page content and URL"
   personalDataPage: PersonalDataPage
   "Returns product filtered using UUID or URL slug"
@@ -2104,7 +2117,7 @@ type Query {
   "Returns complete list of transport methods"
   transport(uuid: Uuid!): Transport
   "Returns available transport methods based on the current cart state"
-  transports(cartUuid: Uuid): [Transport!]!
+  transports(cartUuid: Uuid, displayInCartOnly: Boolean = true): [Transport!]!
   Variant: Variant
 }
 
@@ -2517,6 +2530,8 @@ type Transport {
   daysUntilDelivery: Int!
   "Localized transport description (domain dependent)"
   description: String
+  "Should be displayed in cart (is used for transports, that might be needed to return for example to the Convertim, but are not supposed to be displayed in cart)"
+  displayInCart: Boolean!
   "Transport images"
   images(type: String = null): [Image!]!
   "Localized transport instruction (domain dependent)"
@@ -2528,7 +2543,7 @@ type Transport {
   "Transport name"
   name: String!
   "List of assigned payments"
-  payments: [Payment!]!
+  payments(displayInCartOnly: Boolean = true): [Payment!]!
   "Transport position"
   position: Int!
   "Transport price"
@@ -2545,6 +2560,10 @@ type Transport {
 "One of the possible methods of the transport type"
 enum TransportTypeEnum {
   common
+  convertim_balikovna
+  convertim_dpd_czechia
+  convertim_dpd_slovakia
+  convertim_ppl
   packetery
   personal_pickup
 }
