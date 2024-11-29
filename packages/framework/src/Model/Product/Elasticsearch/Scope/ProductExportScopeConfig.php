@@ -118,6 +118,7 @@ class ProductExportScopeConfig
         ]);
         $this->addNewExportScopeRule(self::SCOPE_PRICE, [
             ProductExportFieldProvider::PRICES,
+            ProductExportFieldProvider::SPECIAL_PRICES,
             ProductExportFieldProvider::VISIBILITY,
         ], [
             self::PRECONDITION_VISIBILITY_RECALCULATION,
