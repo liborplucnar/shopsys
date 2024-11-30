@@ -6,7 +6,7 @@ services:
 
     Shopsys\AdministrationBundle\:
         exclude: '../../{Command,Controller,DependencyInjection,Form,Migrations,Resources,Twig}'
-        resource: '../../**/*{Enum,Facade,Factory,Provider,Repository,Transformer}.php'
+        resource: '../../**/*{Adapter,Enum,Facade,Factory,Manager,Processor,Provider,Repository,Transformer}.php'
 
     Shopsys\AdministrationBundle\Component\Registry\CrudControllerDefinitionRegistry:
         arguments:

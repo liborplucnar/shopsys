@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Shopsys\AdministrationBundle\Controller;
 
 use ReflectionClass;
+use RuntimeException;
 use Shopsys\AdministrationBundle\Component\Attributes\CrudController;
 use Shopsys\AdministrationBundle\Component\Config\Action\ActionsConfig;
 use Shopsys\AdministrationBundle\Component\Config\Action\ActionsFactory;
 use Shopsys\AdministrationBundle\Component\Config\CrudConfig;
 use Shopsys\AdministrationBundle\Component\Config\CrudConfigData;
 use Shopsys\AdministrationBundle\Component\Config\PageType;
+use Shopsys\AdministrationBundle\Component\Datagrid\Adapter\Orm\OrmAdapter;
+use Shopsys\AdministrationBundle\Component\Datagrid\Datagrid;
+use Shopsys\AdministrationBundle\Component\Datagrid\DatagridFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Service\Attribute\Required;
@@ -23,6 +27,12 @@ abstract class AbstractCrudController extends AbstractController
 
     #[Required]
     public ActionsFactory $actionsFactory;
+
+    #[Required]
+    public DatagridFactory $datagridFactory;
+
+    #[Required]
+    public OrmAdapter $adapter;
 
     /**
      * @param \Shopsys\AdministrationBundle\Component\Config\CrudConfig $config
@@ -43,16 +53,34 @@ abstract class AbstractCrudController extends AbstractController
     }
 
     /**
+     * @param \Shopsys\AdministrationBundle\Component\Datagrid\Datagrid $datagrid
+     * @return \Shopsys\AdministrationBundle\Component\Datagrid\Datagrid
+     */
+    protected function configureDatagrid(Datagrid $datagrid): Datagrid
+    {
+        return $datagrid;
+    }
+
+    /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listAction(): Response
     {
+        $datagrid = $this->datagridFactory->create($this->getConfig()->getEntityClass(), $this->adapter);
+        $this->configureDatagrid($datagrid);
+
+
         return $this->render('@ShopsysAdministration/crud/list.html.twig', [
             'title' => $this->getConfig()->getTitle(PageType::LIST),
+            'grid' => $datagrid->render(),
             'globalActions' => $this->actionsFactory->processGlobalActions($this->getConfiguredActions(PageType::LIST)),
         ]);
     }
 
+    /**
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function editAction(int $id): Response
     {
         return $this->render('@ShopsysAdministration/crud/edit.html.twig', [
@@ -61,6 +89,9 @@ abstract class AbstractCrudController extends AbstractController
         ]);
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function createAction(): Response
     {
         return $this->render('@ShopsysAdministration/crud/new.html.twig', [
@@ -69,6 +100,9 @@ abstract class AbstractCrudController extends AbstractController
         ]);
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function deleteAction(): Response
     {
         return $this->redirect($this->generateUrl('admin_default_dashboard'));
