@@ -82,9 +82,9 @@ Displays localized field in vertical order of full-width label and inputs.
 
 Displays editable table of `OrderItems` from provided `Order`.
 
-### [WarningMessageType](https://github.com/shopsys/shopsys/blob/master/packages/framework/src/Form/WarningMessageType.php)
+### [MessageType](https://github.com/shopsys/shopsys/blob/HEAD/packages/framework/src/Form/MessageType.php)
 
-Displays highlighted message with warning icon.
+Displays highlighted message with an icon. Allows set the info or warning formatting using the `message_level` option.
 
 ### [LocalizedType](https://github.com/shopsys/shopsys/blob/master/packages/framework/src/Form/Locale/LocalizedType.php)
 

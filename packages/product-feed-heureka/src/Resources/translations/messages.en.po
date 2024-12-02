@@ -4,6 +4,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 
+msgid "Heureka XML feed settings"
+msgstr ""
+
 msgid "Heureka category"
 msgstr "Heureka category"
 
@@ -12,4 +15,10 @@ msgstr "Heureka.cz product feed"
 
 msgid "Maximum price per click"
 msgstr "Maximum price per click"
+
+msgid "Number of delivery days for out of stock products for Heureka XML feed"
+msgstr ""
+
+msgid "The value is used for DELIVERY_DATE setting in Heureka XML feed. See <a href=\"https://sluzby.heureka.cz/napoveda/xml-feed/#DELIVERY_DATE\">the docs</a> for more information."
+msgstr ""
 

@@ -7,6 +7,10 @@ services:
     Shopsys\ProductFeed\LuigisBoxBundle\:
         resource: '../../*'
 
+    Shopsys\ProductFeed\LuigisBoxBundle\Form\LuigisBoxCrudExtension:
+        tags:
+            - { name: shopsys.crud_extension, type: stockSettings }
+
     Shopsys\ProductFeed\LuigisBoxBundle\LuigisBoxProductFeed:
         tags:
             - { name: shopsys.feed, hours: '*', minutes: '15' }

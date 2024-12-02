@@ -49,7 +49,7 @@ class ZboziFeedItemFactory
 
         return new ZboziFeedItem(
             $product->getId(),
-            $product->getName($domainConfig->getLocale()),
+            $product->getFullName($domainConfig->getLocale()),
             $this->productUrlsBatchLoader->getProductUrl($product, $domainConfig),
             $this->getPrice($product, $domainConfig),
             $this->getPathToMainCategory($product, $domainConfig),
@@ -60,7 +60,7 @@ class ZboziFeedItemFactory
             $this->getBrandName($product),
             $product->getEan(),
             $product->getPartno(),
-            $this->productAvailabilityFacade->getProductAvailabilityDaysByDomainId($product, $domainConfig->getId()),
+            $this->productAvailabilityFacade->getProductAvailabilityDaysForFeedsByDomainId($product, $domainConfig->getId()),
             $cpc,
             $cpcSearch,
         );

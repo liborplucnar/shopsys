@@ -49,7 +49,7 @@ class ZboziFeedItemTest extends TestCase
         $this->productParametersBatchLoaderMock = $this->createMock(ProductParametersBatchLoader::class);
         $this->categoryFacadeMock = $this->createMock(CategoryFacade::class);
         $productAvailabilityFacadeMock = $this->createMock(ProductAvailabilityFacade::class);
-        $productAvailabilityFacadeMock->method('getProductAvailabilityDaysByDomainId')->willReturn(0);
+        $productAvailabilityFacadeMock->method('getProductAvailabilityDaysForFeedsByDomainId')->willReturn(0);
 
         $this->zboziFeedItemFactory = new ZboziFeedItemFactory(
             $this->productPriceCalculationForCustomerUserMock,
@@ -63,7 +63,7 @@ class ZboziFeedItemTest extends TestCase
 
         $this->defaultProduct = $this->createMock(Product::class);
         $this->defaultProduct->method('getId')->willReturn(1);
-        $this->defaultProduct->method('getName')->with('cs')->willReturn('product name');
+        $this->defaultProduct->method('getFullName')->with('cs')->willReturn('product name');
 
         $productPrice = new ProductPrice(Price::zero(), false);
         $this->productPriceCalculationForCustomerUserMock->method('calculatePriceForCustomerUserAndDomainId')

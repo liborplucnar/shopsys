@@ -10,6 +10,7 @@ use Shopsys\FrameworkBundle\Component\Cache\InMemoryCache;
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
 use Shopsys\FrameworkBundle\Component\Domain\Domain;
 use Shopsys\FrameworkBundle\Component\Money\Money;
+use Shopsys\FrameworkBundle\Component\Setting\Setting;
 use Shopsys\FrameworkBundle\Model\Category\Category;
 use Shopsys\FrameworkBundle\Model\Category\CategoryFacade;
 use Shopsys\FrameworkBundle\Model\Pricing\Price;
@@ -23,10 +24,13 @@ use Shopsys\ProductFeed\HeurekaBundle\Model\FeedItem\HeurekaFeedItemFactory;
 use Shopsys\ProductFeed\HeurekaBundle\Model\FeedItem\HeurekaProductDataBatchLoader;
 use Shopsys\ProductFeed\HeurekaBundle\Model\HeurekaCategory\HeurekaCategory;
 use Shopsys\ProductFeed\HeurekaBundle\Model\HeurekaCategory\HeurekaCategoryFacade;
+use Shopsys\ProductFeed\HeurekaBundle\Model\Setting\HeurekaFeedSettingEnum;
 use Tests\FrameworkBundle\Test\IsMoneyEqual;
 
 class HeurekaFeedItemTest extends TestCase
 {
+    private const int MOCKED_DELIVERY_DAYS_FOR_OUT_OF_STOCK_PRODUCTS = 5;
+
     private ProductPriceCalculationForCustomerUser|MockObject $productPriceCalculationForCustomerUserMock;
 
     private HeurekaProductDataBatchLoader|MockObject $heurekaProductDataBatchLoaderMock;
@@ -41,38 +45,13 @@ class HeurekaFeedItemTest extends TestCase
 
     private Product|MockObject $defaultProduct;
 
+    private ProductAvailabilityFacade|MockObject $productAvailabilityFacadeMock;
+
+    private Setting|MockObject $settingMock;
+
     protected function setUp(): void
     {
-        $this->productPriceCalculationForCustomerUserMock = $this->createMock(
-            ProductPriceCalculationForCustomerUser::class,
-        );
-        $this->heurekaProductDataBatchLoaderMock = $this->createMock(HeurekaProductDataBatchLoader::class);
-        $this->heurekaCategoryFacadeMock = $this->createMock(HeurekaCategoryFacade::class);
-        $this->categoryFacadeMock = $this->createMock(CategoryFacade::class);
-        $productAvailabilityFacadeMock = $this->createMock(ProductAvailabilityFacade::class);
-        $productAvailabilityFacadeMock->method('getProductAvailabilityDaysByDomainId')->willReturn(0);
-
-        $this->heurekaFeedItemFactory = new HeurekaFeedItemFactory(
-            $this->productPriceCalculationForCustomerUserMock,
-            $this->heurekaProductDataBatchLoaderMock,
-            $this->heurekaCategoryFacadeMock,
-            $this->categoryFacadeMock,
-            $productAvailabilityFacadeMock,
-            new InMemoryCache(),
-        );
-
-        $this->defaultDomain = $this->createDomainConfigMock(Domain::FIRST_DOMAIN_ID, 'https://example.cz', 'cs');
-
-        $this->defaultProduct = $this->createMock(Product::class);
-        $this->defaultProduct->method('getId')->willReturn(1);
-        $this->defaultProduct->method('getName')->with('cs')->willReturn('product name');
-
-        $productPrice = new ProductPrice(Price::zero(), false);
-        $this->productPriceCalculationForCustomerUserMock->method('calculatePriceForCustomerUserAndDomainId')
-            ->with($this->defaultProduct, Domain::FIRST_DOMAIN_ID, null)->willReturn($productPrice);
-
-        $this->heurekaProductDataBatchLoaderMock->method('getProductUrl')
-            ->with($this->defaultProduct, $this->defaultDomain)->willReturn('https://example.com/product-1');
+        $this->doSetUp(true);
     }
 
     /**
@@ -92,7 +71,7 @@ class HeurekaFeedItemTest extends TestCase
         return $domainConfigMock;
     }
 
-    public function testMinimalHeurekaFeedItemIsCreatable()
+    public function testMinimalHeurekaFeedItemIsCreatable(): void
     {
         $heurekaFeedItem = $this->heurekaFeedItemFactory->create($this->defaultProduct, $this->defaultDomain);
 
@@ -115,7 +94,7 @@ class HeurekaFeedItemTest extends TestCase
         self::assertNull($heurekaFeedItem->getCpc());
     }
 
-    public function testHeurekaFeedItemWithGroupId()
+    public function testHeurekaFeedItemWithGroupId(): void
     {
         $mainVariantMock = $this->createMock(Product::class);
         $mainVariantMock->method('getId')->willReturn(2);
@@ -127,7 +106,7 @@ class HeurekaFeedItemTest extends TestCase
         self::assertEquals(2, $heurekaFeedItem->getGroupId());
     }
 
-    public function testHeurekaFeedItemWithDescription()
+    public function testHeurekaFeedItemWithDescription(): void
     {
         $this->defaultProduct->method('getDescriptionAsPlainText')
             ->with(1)->willReturn('product description');
@@ -137,7 +116,7 @@ class HeurekaFeedItemTest extends TestCase
         self::assertEquals('product description', $heurekaFeedItem->getDescription());
     }
 
-    public function testHeurekaFeedItemWithImgUrl()
+    public function testHeurekaFeedItemWithImgUrl(): void
     {
         $this->heurekaProductDataBatchLoaderMock->method('getProductImageUrl')
             ->with($this->defaultProduct, $this->defaultDomain)->willReturn('https://example.com/img/product/1');
@@ -147,7 +126,7 @@ class HeurekaFeedItemTest extends TestCase
         self::assertEquals('https://example.com/img/product/1', $heurekaFeedItem->getImgUrl());
     }
 
-    public function testHeurekaFeedItemWithEan()
+    public function testHeurekaFeedItemWithEan(): void
     {
         $this->defaultProduct->method('getEan')->willReturn('1234567890123');
 
@@ -156,7 +135,7 @@ class HeurekaFeedItemTest extends TestCase
         self::assertEquals('1234567890123', $heurekaFeedItem->getEan());
     }
 
-    public function testHeurekaFeedItemWithManufacturer()
+    public function testHeurekaFeedItemWithManufacturer(): void
     {
         /** @var \Shopsys\FrameworkBundle\Model\Product\Brand\Brand|\PHPUnit\Framework\MockObject\MockObject $brand */
         $brand = $this->createMock(Brand::class);
@@ -168,7 +147,7 @@ class HeurekaFeedItemTest extends TestCase
         self::assertEquals('manufacturer name', $heurekaFeedItem->getManufacturer());
     }
 
-    public function testHeurekaFeedItemWithCategoryText()
+    public function testHeurekaFeedItemWithCategoryText(): void
     {
         /** @var \Shopsys\ProductFeed\HeurekaBundle\Model\HeurekaCategory\HeurekaCategory|\PHPUnit\Framework\MockObject\MockObject $heurekaCategoryMock */
         $heurekaCategoryMock = $this->createMock(HeurekaCategory::class);
@@ -189,7 +168,7 @@ class HeurekaFeedItemTest extends TestCase
         self::assertEquals('heureka category full text', $heurekaFeedItem->getCategoryText());
     }
 
-    public function testHeurekaFeedItemWithParams()
+    public function testHeurekaFeedItemWithParams(): void
     {
         $this->heurekaProductDataBatchLoaderMock->method('getProductParametersByName')
             ->with($this->defaultProduct, $this->defaultDomain)->willReturn(['color' => 'black']);
@@ -199,7 +178,7 @@ class HeurekaFeedItemTest extends TestCase
         self::assertEquals(['color' => 'black'], $heurekaFeedItem->getParams());
     }
 
-    public function testHeurekaFeedItemWithCpc()
+    public function testHeurekaFeedItemWithCpc(): void
     {
         $this->heurekaProductDataBatchLoaderMock->method('getProductCpc')
             ->with($this->defaultProduct, $this->defaultDomain)->willReturn(Money::create(5));
@@ -207,5 +186,56 @@ class HeurekaFeedItemTest extends TestCase
         $heurekaFeedItem = $this->heurekaFeedItemFactory->create($this->defaultProduct, $this->defaultDomain);
 
         self::assertThat($heurekaFeedItem->getCpc(), new IsMoneyEqual(Money::create(5)));
+    }
+
+    public function testHeurekaFeedItemOutOfStock(): void
+    {
+        $this->doSetUp(false);
+        $heurekaFeedItem = $this->heurekaFeedItemFactory->create($this->defaultProduct, $this->defaultDomain);
+
+        self::assertEquals(self::MOCKED_DELIVERY_DAYS_FOR_OUT_OF_STOCK_PRODUCTS, $heurekaFeedItem->getDeliveryDate());
+    }
+
+    /**
+     * @param bool $isProductAvailableOnDomain
+     */
+    private function doSetUp(bool $isProductAvailableOnDomain): void
+    {
+        $this->productPriceCalculationForCustomerUserMock = $this->createMock(
+            ProductPriceCalculationForCustomerUser::class,
+        );
+        $this->heurekaProductDataBatchLoaderMock = $this->createMock(HeurekaProductDataBatchLoader::class);
+        $this->heurekaCategoryFacadeMock = $this->createMock(HeurekaCategoryFacade::class);
+        $this->categoryFacadeMock = $this->createMock(CategoryFacade::class);
+        $this->productAvailabilityFacadeMock = $this->createMock(ProductAvailabilityFacade::class);
+        $this->productAvailabilityFacadeMock->method('isProductAvailableOnDomainCached')->willReturn($isProductAvailableOnDomain);
+        $this->settingMock = $this->createMock(Setting::class);
+
+        if ($isProductAvailableOnDomain === false) {
+            $this->settingMock->method('getForDomain')->with(HeurekaFeedSettingEnum::HEUREKA_FEED_DELIVERY_DAYS, Domain::FIRST_DOMAIN_ID)->willReturn(self::MOCKED_DELIVERY_DAYS_FOR_OUT_OF_STOCK_PRODUCTS);
+        }
+
+        $this->heurekaFeedItemFactory = new HeurekaFeedItemFactory(
+            $this->productPriceCalculationForCustomerUserMock,
+            $this->heurekaProductDataBatchLoaderMock,
+            $this->heurekaCategoryFacadeMock,
+            $this->categoryFacadeMock,
+            $this->productAvailabilityFacadeMock,
+            new InMemoryCache(),
+            $this->settingMock,
+        );
+
+        $this->defaultDomain = $this->createDomainConfigMock(Domain::FIRST_DOMAIN_ID, 'https://example.cz', 'cs');
+
+        $this->defaultProduct = $this->createMock(Product::class);
+        $this->defaultProduct->method('getId')->willReturn(1);
+        $this->defaultProduct->method('getFullName')->with('cs')->willReturn('product name');
+
+        $productPrice = new ProductPrice(Price::zero(), false);
+        $this->productPriceCalculationForCustomerUserMock->method('calculatePriceForCustomerUserAndDomainId')
+            ->with($this->defaultProduct, Domain::FIRST_DOMAIN_ID, null)->willReturn($productPrice);
+
+        $this->heurekaProductDataBatchLoaderMock->method('getProductUrl')
+            ->with($this->defaultProduct, $this->defaultDomain)->willReturn('https://example.com/product-1');
     }
 }

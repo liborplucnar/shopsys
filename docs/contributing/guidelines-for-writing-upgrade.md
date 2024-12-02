@@ -45,6 +45,7 @@ Each upgrade file must have a link to the main UPGRADE.md file with general info
 - shopsys/brand-feed-luigis-box
 - shopsys/category-feed-luigis-box
 - shopsys/product-feed-google
+- shopsys/product-feed-mergado
 - shopsys/product-feed-heureka
 - shopsys/product-feed-heureka-delivery
 - shopsys/product-feed-zbozi

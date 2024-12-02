@@ -6,7 +6,6 @@ namespace Shopsys\ProductFeed\HeurekaBundle\Model\Product;
 
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
 use Shopsys\FrameworkBundle\Model\Pricing\Group\PricingGroup;
-use Shopsys\FrameworkBundle\Model\Product\Product;
 use Shopsys\FrameworkBundle\Model\Product\ProductRepository;
 
 class HeurekaProductRepository
@@ -31,13 +30,8 @@ class HeurekaProductRepository
         ?int $lastSeekId,
         int $maxResults,
     ): iterable {
-        $queryBuilder = $this->productRepository->getAllVisibleWithoutInquiriesQueryBuilder($domainConfig->getId(), $pricingGroup)
+        $queryBuilder = $this->productRepository->getAllSellableWithoutInquiriesQueryBuilder($domainConfig->getId(), $pricingGroup)
             ->addSelect('b')->leftJoin('p.brand', 'b')
-            ->andWhere('p.variantType != :variantTypeMain')->setParameter(
-                'variantTypeMain',
-                Product::VARIANT_TYPE_MAIN,
-            )
-            ->andWhere('p.calculatedSellingDenied = FALSE')
             ->orderBy('p.id', 'asc')
             ->setMaxResults($maxResults);
 

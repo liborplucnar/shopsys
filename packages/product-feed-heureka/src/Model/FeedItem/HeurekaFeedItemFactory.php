@@ -6,12 +6,14 @@ namespace Shopsys\ProductFeed\HeurekaBundle\Model\FeedItem;
 
 use Shopsys\FrameworkBundle\Component\Cache\InMemoryCache;
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
+use Shopsys\FrameworkBundle\Component\Setting\Setting;
 use Shopsys\FrameworkBundle\Model\Category\CategoryFacade;
 use Shopsys\FrameworkBundle\Model\Pricing\Price;
 use Shopsys\FrameworkBundle\Model\Product\Availability\ProductAvailabilityFacade;
 use Shopsys\FrameworkBundle\Model\Product\Pricing\ProductPriceCalculationForCustomerUser;
 use Shopsys\FrameworkBundle\Model\Product\Product;
 use Shopsys\ProductFeed\HeurekaBundle\Model\HeurekaCategory\HeurekaCategoryFacade;
+use Shopsys\ProductFeed\HeurekaBundle\Model\Setting\HeurekaFeedSettingEnum;
 
 class HeurekaFeedItemFactory
 {
@@ -24,6 +26,7 @@ class HeurekaFeedItemFactory
      * @param \Shopsys\FrameworkBundle\Model\Category\CategoryFacade $categoryFacade
      * @param \Shopsys\FrameworkBundle\Model\Product\Availability\ProductAvailabilityFacade $productAvailabilityFacade
      * @param \Shopsys\FrameworkBundle\Component\Cache\InMemoryCache $inMemoryCache
+     * @param \Shopsys\FrameworkBundle\Component\Setting\Setting $setting
      */
     public function __construct(
         protected readonly ProductPriceCalculationForCustomerUser $productPriceCalculationForCustomerUser,
@@ -32,6 +35,7 @@ class HeurekaFeedItemFactory
         protected readonly CategoryFacade $categoryFacade,
         protected readonly ProductAvailabilityFacade $productAvailabilityFacade,
         protected readonly InMemoryCache $inMemoryCache,
+        protected readonly Setting $setting,
     ) {
     }
 
@@ -46,7 +50,7 @@ class HeurekaFeedItemFactory
 
         return new HeurekaFeedItem(
             $product->getId(),
-            $product->getName($domainConfig->getLocale()),
+            $product->getFullName($domainConfig->getLocale()),
             $this->productDataBatchLoader->getProductParametersByName($product, $domainConfig),
             $this->productDataBatchLoader->getProductUrl($product, $domainConfig),
             $this->getPrice($product, $domainConfig),
@@ -55,7 +59,7 @@ class HeurekaFeedItemFactory
             $this->productDataBatchLoader->getProductImageUrl($product, $domainConfig),
             $this->getBrandName($product),
             $product->getEan(),
-            $this->productAvailabilityFacade->getProductAvailabilityDaysByDomainId($product, $domainConfig->getId()),
+            $this->getProductAvailabilityDays($product, $domainConfig->getId()),
             $this->getHeurekaCategoryFullName($product, $domainConfig),
             $this->productDataBatchLoader->getProductCpc($product, $domainConfig),
         );
@@ -128,5 +132,19 @@ class HeurekaFeedItemFactory
         $heurekaCategory = $this->heurekaCategoryFacade->findByCategoryId($categoryId);
 
         return $heurekaCategory !== null ? $heurekaCategory->getFullName() : null;
+    }
+
+    /**
+     * @param \Shopsys\FrameworkBundle\Model\Product\Product $product
+     * @param int $domainId
+     * @return int|null
+     */
+    protected function getProductAvailabilityDays(Product $product, int $domainId): ?int
+    {
+        if ($this->productAvailabilityFacade->isProductAvailableOnDomainCached($product, $domainId)) {
+            return 0;
+        }
+
+        return $this->setting->getForDomain(HeurekaFeedSettingEnum::HEUREKA_FEED_DELIVERY_DAYS, $domainId);
     }
 }

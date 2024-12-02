@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\ProductFeed\LuigisBoxBundle\Unit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopsys\FrameworkBundle\Component\Domain\Config\DomainConfig;
 use Shopsys\FrameworkBundle\Component\Domain\Domain;
 use Shopsys\FrameworkBundle\Component\Money\Money;
+use Shopsys\FrameworkBundle\Component\Setting\Setting;
 use Shopsys\FrameworkBundle\Component\Translation\Translator;
 use Shopsys\FrameworkBundle\Model\Category\Category;
 use Shopsys\FrameworkBundle\Model\Category\CategoryRepository;
@@ -32,6 +34,7 @@ use Tests\FrameworkBundle\Test\IsMoneyEqual;
 
 class LuigisBoxFeedItemTest extends TestCase
 {
+    private const int MOCKED_LUIGIS_BOX_RANK_SETTING = 8;
     private const MAIN_CATEGORY_ID = 1;
     private const MAIN_CATEGORY_NAME = 'Main category';
     private const PRODUCT_IDENTITY = 'product-1';
@@ -66,71 +69,7 @@ class LuigisBoxFeedItemTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->currencyFacadeMock = $this->createMock(CurrencyFacade::class);
-        $this->productPriceCalculationForCustomerUserMock = $this->createMock(
-            ProductPriceCalculationForCustomerUser::class,
-        );
-        $this->productUrlsBatchLoaderMock = $this->createMock(ProductUrlsBatchLoader::class);
-        $this->defaultCurrency = $this->createCurrencyMock(1, self::EUR);
-        $this->defaultDomain = $this->createDomainConfigMock(
-            Domain::FIRST_DOMAIN_ID,
-            'https://example.com',
-            self::DEFAULT_LOCALE,
-            $this->defaultCurrency,
-        );
-
-        $translator = $this->createMock(Translator::class);
-        $translator->method('staticTrans')->willReturnArgument(0);
-        Translator::injectSelf($translator);
-
-        $flag = $this->createMock(Flag::class);
-        $flag->method('getName')->willReturn(self::FLAG_NAME);
-        $flag->method('isVisible')->willReturn('true');
-
-        $mainCategory = $this->createMock(Category::class);
-        $mainCategory->method('getId')->willReturn(self::MAIN_CATEGORY_ID);
-        $mainCategory->method('getName')->with(self::DEFAULT_LOCALE)->willReturn(self::MAIN_CATEGORY_NAME);
-
-        $this->defaultProduct = $this->createMock(Product::class);
-        $this->defaultProduct->method('getId')->willReturn(self::PRODUCT_ID);
-        $this->defaultProduct->method('getName')->with(self::DEFAULT_LOCALE)->willReturn(self::PRODUCT_NAME);
-        $this->defaultProduct->method('getCalculatedSellingDenied')->willReturn(false);
-        $this->defaultProduct->method('getFlags')->willReturn([$flag]);
-        $this->defaultProduct->method('getCategoriesIndexedByDomainId')->willReturn([self::MAIN_CATEGORY_ID => [$mainCategory]]);
-        $this->defaultProduct->method('isMainVariant')->willReturn(false);
-        $this->defaultProduct->method('isVariant')->willReturn(false);
-        $this->defaultProduct->method('getEan')->willReturn(self::PRODUCT_EAN);
-        $this->defaultProduct->method('getPartNo')->willReturn(self::PRODUCT_PART_NO);
-        $this->defaultProduct->method('getCatnum')->willReturn(self::PRODUCT_SKU);
-
-        $this->mockProductPrice($this->defaultProduct, $this->defaultDomain, Price::zero());
-        $this->mockProductUrl($this->defaultProduct, $this->defaultDomain, self::PRODUCT_URL);
-
-        $categoryRepositoryMock = $this->createMock(CategoryRepository::class);
-        $categoryRepositoryMock->method('getProductMainCategoryOnDomain')->willReturn($mainCategory);
-
-        $parameter = $this->createMock(Parameter::class);
-        $parameter->method('getName')->willReturn(self::PARAMETER_NAME);
-
-        $parameterValue = $this->createMock(ParameterValue::class);
-        $parameterValue->method('getLocale')->willReturn(self::DEFAULT_LOCALE);
-        $parameterValue->method('getText')->willReturn(self::PARAMETER_VALUE);
-
-        $productParameterValue = new ProductParameterValue($this->defaultProduct, $parameter, $parameterValue);
-
-        $productCachedAttributesFacade = $this->createMock(ProductCachedAttributesFacade::class);
-        $productCachedAttributesFacade->method('getProductParameterValues')->willReturn([$productParameterValue]);
-
-        $productAvailabilityFacade = $this->createMock(ProductAvailabilityFacade::class);
-
-        $this->luigisBoxProductFeedItemFactory = new LuigisBoxProductFeedItemFactory(
-            $this->productPriceCalculationForCustomerUserMock,
-            $this->currencyFacadeMock,
-            $this->productUrlsBatchLoaderMock,
-            $categoryRepositoryMock,
-            $productCachedAttributesFacade,
-            $productAvailabilityFacade,
-        );
+        $this->doSetUp(true);
     }
 
     /**
@@ -203,29 +142,36 @@ class LuigisBoxFeedItemTest extends TestCase
             ->with($product, $domain)->willReturn($url);
     }
 
-    public function testMinimalLuigisBoxFeedItemIsCreatable(): void
+    /**
+     * @param bool $productIsAvailableOnStock
+     * @param int $expectedRank
+     */
+    #[DataProvider('luigisBoxFeedItemDataProvider')]
+    public function testMinimalLuigisBoxFeedItemIsCreatable(bool $productIsAvailableOnStock, int $expectedRank): void
     {
+        $this->doSetUp($productIsAvailableOnStock);
         $luigisBoxProductFeedItem = $this->luigisBoxProductFeedItemFactory->create($this->defaultProduct, $this->defaultDomain);
 
-        self::assertInstanceOf(LuigisBoxProductFeedItem::class, $luigisBoxProductFeedItem);
-        self::assertEquals(self::PRODUCT_IDENTITY, $luigisBoxProductFeedItem->getIdentity());
-        self::assertEquals(self::PRODUCT_ID, $luigisBoxProductFeedItem->getSeekId());
-        self::assertEquals(self::PRODUCT_NAME, $luigisBoxProductFeedItem->getTitle());
-        self::assertEquals(self::PRODUCT_URL, $luigisBoxProductFeedItem->getUrl());
-        self::assertEquals(self::PRODUCT_EAN, $luigisBoxProductFeedItem->getEan());
-        self::assertEquals(self::PRODUCT_SKU, $luigisBoxProductFeedItem->getProductCode());
-        self::assertNull($luigisBoxProductFeedItem->getDescription());
-        self::assertEquals([self::MAIN_CATEGORY_ID => self::MAIN_CATEGORY_NAME], $luigisBoxProductFeedItem->getCategoryNamesIndexedByCategoryId());
-        self::assertNull($luigisBoxProductFeedItem->getImageLinkS());
-        self::assertNull($luigisBoxProductFeedItem->getImageLinkM());
-        self::assertNull($luigisBoxProductFeedItem->getImageLinkL());
-        self::assertEquals(t('In stock'), $luigisBoxProductFeedItem->getAvailabilityRankText());
-        self::assertThat($luigisBoxProductFeedItem->getPrice()->getPriceWithoutVat(), new IsMoneyEqual(Money::zero()));
-        self::assertThat($luigisBoxProductFeedItem->getPrice()->getPriceWithVat(), new IsMoneyEqual(Money::zero()));
-        self::assertEquals(self::EUR, $luigisBoxProductFeedItem->getCurrency()->getCode());
-        self::assertNull($luigisBoxProductFeedItem->getBrand());
-        self::assertEquals([self::FLAG_NAME], $luigisBoxProductFeedItem->getFlagNames());
-        self::assertEquals([self::PARAMETER_NAME => self::PARAMETER_VALUE], $luigisBoxProductFeedItem->getProductParameterValuesIndexedByName());
+        $this->assertCommonFields($luigisBoxProductFeedItem);
+
+        self::assertSame($productIsAvailableOnStock ? t('Out of stock') : t('In stock'), $luigisBoxProductFeedItem->getAvailabilityRankText());
+        self::assertSame($expectedRank, $luigisBoxProductFeedItem->getAvailabilityRank());
+    }
+
+    /**
+     * @return iterable
+     */
+    public static function luigisBoxFeedItemDataProvider(): iterable
+    {
+        yield 'product is available on stock' => [
+            'productIsAvailableOnStock' => true,
+            'expectedRank' => 1,
+        ];
+
+        yield 'product is not available on stock' => [
+            'productIsAvailableOnStock' => false,
+            'expectedRank' => self::MOCKED_LUIGIS_BOX_RANK_SETTING,
+        ];
     }
 
     public function testLuigisBoxFeedItemWithBrand(): void
@@ -259,13 +205,104 @@ class LuigisBoxFeedItemTest extends TestCase
         self::assertEquals(self::IMAGE_URL . '?width=100&height=100', $luigisBoxProductFeedItem->getImageLinkS());
     }
 
-    public function testLuigisBoxFeedItemWithSellingDenied(): void
+    /**
+     * @param bool $isProductAvailableOnStock
+     */
+    private function doSetUp(bool $isProductAvailableOnStock): void
     {
-        $product = clone $this->defaultProduct;
-        $product->method('getCalculatedSellingDenied')->willReturn(true);
+        $this->currencyFacadeMock = $this->createMock(CurrencyFacade::class);
+        $this->productPriceCalculationForCustomerUserMock = $this->createMock(
+            ProductPriceCalculationForCustomerUser::class,
+        );
+        $this->productUrlsBatchLoaderMock = $this->createMock(ProductUrlsBatchLoader::class);
+        $this->defaultCurrency = $this->createCurrencyMock(1, self::EUR);
+        $this->defaultDomain = $this->createDomainConfigMock(
+            Domain::FIRST_DOMAIN_ID,
+            'https://example.com',
+            self::DEFAULT_LOCALE,
+            $this->defaultCurrency,
+        );
 
-        $luigisBoxProductFeedItem = $this->luigisBoxProductFeedItemFactory->create($product, $this->defaultDomain);
+        $translator = $this->createMock(Translator::class);
+        $translator->method('staticTrans')->willReturnArgument(0);
+        Translator::injectSelf($translator);
 
-        self::assertEquals(t('Out of stock'), $luigisBoxProductFeedItem->getAvailabilityRankText());
+        $flag = $this->createMock(Flag::class);
+        $flag->method('getName')->willReturn(self::FLAG_NAME);
+        $flag->method('isVisible')->willReturn('true');
+
+        $mainCategory = $this->createMock(Category::class);
+        $mainCategory->method('getId')->willReturn(self::MAIN_CATEGORY_ID);
+        $mainCategory->method('getName')->with(self::DEFAULT_LOCALE)->willReturn(self::MAIN_CATEGORY_NAME);
+
+        $this->defaultProduct = $this->createMock(Product::class);
+        $this->defaultProduct->method('getId')->willReturn(self::PRODUCT_ID);
+        $this->defaultProduct->method('getFullName')->with(self::DEFAULT_LOCALE)->willReturn(self::PRODUCT_NAME);
+        $this->defaultProduct->method('getFlags')->willReturn([$flag]);
+        $this->defaultProduct->method('getCategoriesIndexedByDomainId')->willReturn([self::MAIN_CATEGORY_ID => [$mainCategory]]);
+        $this->defaultProduct->method('isMainVariant')->willReturn(false);
+        $this->defaultProduct->method('isVariant')->willReturn(false);
+        $this->defaultProduct->method('getEan')->willReturn(self::PRODUCT_EAN);
+        $this->defaultProduct->method('getPartNo')->willReturn(self::PRODUCT_PART_NO);
+        $this->defaultProduct->method('getCatnum')->willReturn(self::PRODUCT_SKU);
+
+        $this->mockProductPrice($this->defaultProduct, $this->defaultDomain, Price::zero());
+        $this->mockProductUrl($this->defaultProduct, $this->defaultDomain, self::PRODUCT_URL);
+
+        $categoryRepositoryMock = $this->createMock(CategoryRepository::class);
+        $categoryRepositoryMock->method('getProductMainCategoryOnDomain')->willReturn($mainCategory);
+
+        $parameter = $this->createMock(Parameter::class);
+        $parameter->method('getName')->willReturn(self::PARAMETER_NAME);
+
+        $parameterValue = $this->createMock(ParameterValue::class);
+        $parameterValue->method('getLocale')->willReturn(self::DEFAULT_LOCALE);
+        $parameterValue->method('getText')->willReturn(self::PARAMETER_VALUE);
+
+        $productParameterValue = new ProductParameterValue($this->defaultProduct, $parameter, $parameterValue);
+
+        $productCachedAttributesFacade = $this->createMock(ProductCachedAttributesFacade::class);
+        $productCachedAttributesFacade->method('getProductParameterValues')->willReturn([$productParameterValue]);
+
+        $productAvailabilityFacade = $this->createMock(ProductAvailabilityFacade::class);
+        $productAvailabilityFacade->method('isProductAvailableOnDomainCached')->willReturn($isProductAvailableOnStock);
+
+        $settingMock = $this->createMock(Setting::class);
+        $settingMock->method('getForDomain')->willReturn(self::MOCKED_LUIGIS_BOX_RANK_SETTING);
+
+        $this->luigisBoxProductFeedItemFactory = new LuigisBoxProductFeedItemFactory(
+            $this->productPriceCalculationForCustomerUserMock,
+            $this->currencyFacadeMock,
+            $this->productUrlsBatchLoaderMock,
+            $categoryRepositoryMock,
+            $productCachedAttributesFacade,
+            $productAvailabilityFacade,
+            $settingMock,
+        );
+    }
+
+    /**
+     * @param \Shopsys\ProductFeed\LuigisBoxBundle\Model\FeedItem\LuigisBoxProductFeedItem $luigisBoxProductFeedItem
+     */
+    private function assertCommonFields(LuigisBoxProductFeedItem $luigisBoxProductFeedItem): void
+    {
+        self::assertSame(self::PRODUCT_IDENTITY, $luigisBoxProductFeedItem->getIdentity());
+        self::assertSame(self::PRODUCT_ID, $luigisBoxProductFeedItem->getSeekId());
+        self::assertSame(self::PRODUCT_NAME, $luigisBoxProductFeedItem->getTitle());
+        self::assertSame(self::PRODUCT_URL, $luigisBoxProductFeedItem->getUrl());
+        self::assertSame(self::PRODUCT_EAN, $luigisBoxProductFeedItem->getEan());
+        self::assertSame(self::PRODUCT_SKU, $luigisBoxProductFeedItem->getProductCode());
+        self::assertNull($luigisBoxProductFeedItem->getDescription());
+        self::assertSame([self::MAIN_CATEGORY_ID => self::MAIN_CATEGORY_NAME], $luigisBoxProductFeedItem->getCategoryNamesIndexedByCategoryId());
+        self::assertNull($luigisBoxProductFeedItem->getImageLinkS());
+        self::assertNull($luigisBoxProductFeedItem->getImageLinkM());
+        self::assertNull($luigisBoxProductFeedItem->getImageLinkL());
+        self::assertThat($luigisBoxProductFeedItem->getPrice()->getPriceWithoutVat(), new IsMoneyEqual(Money::zero()));
+        self::assertThat($luigisBoxProductFeedItem->getPrice()->getPriceWithVat(), new IsMoneyEqual(Money::zero()));
+        self::assertSame(self::EUR, $luigisBoxProductFeedItem->getCurrency()->getCode());
+        self::assertNull($luigisBoxProductFeedItem->getBrand());
+        self::assertSame([self::FLAG_NAME], $luigisBoxProductFeedItem->getFlagNames());
+        self::assertSame([self::PARAMETER_NAME => self::PARAMETER_VALUE], $luigisBoxProductFeedItem->getProductParameterValuesIndexedByName());
+        self::assertSame(1, $luigisBoxProductFeedItem->getAvailability());
     }
 }

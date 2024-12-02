@@ -12,6 +12,7 @@ use Shopsys\FrameworkBundle\Component\Money\Money;
 use Shopsys\FrameworkBundle\Model\Pricing\Currency\Currency;
 use Shopsys\FrameworkBundle\Model\Pricing\Currency\CurrencyFacade;
 use Shopsys\FrameworkBundle\Model\Pricing\Price;
+use Shopsys\FrameworkBundle\Model\Product\Availability\ProductAvailabilityFacade;
 use Shopsys\FrameworkBundle\Model\Product\Brand\Brand;
 use Shopsys\FrameworkBundle\Model\Product\Collection\ProductUrlsBatchLoader;
 use Shopsys\FrameworkBundle\Model\Product\Pricing\ProductPrice;
@@ -29,6 +30,8 @@ class GoogleFeedItemTest extends TestCase
 
     private ProductUrlsBatchLoader|MockObject $productUrlsBatchLoaderMock;
 
+    private ProductAvailabilityFacade|MockObject $productAvailabilityFacadeMock;
+
     private GoogleFeedItemFactory $googleFeedItemFactory;
 
     private Currency $defaultCurrency;
@@ -39,16 +42,30 @@ class GoogleFeedItemTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->doSetUp(true);
+    }
+
+    /**
+     * @param bool $isProductAvailableOnStock
+     */
+    private function doSetUp(bool $isProductAvailableOnStock): void
+    {
         $this->productPriceCalculationForCustomerUserMock = $this->createMock(
             ProductPriceCalculationForCustomerUser::class,
         );
         $this->currencyFacadeMock = $this->createMock(CurrencyFacade::class);
         $this->productUrlsBatchLoaderMock = $this->createMock(ProductUrlsBatchLoader::class);
+        $this->productAvailabilityFacadeMock = $this->getMockBuilder(ProductAvailabilityFacade::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isProductAvailableOnDomainCached'])
+            ->getMock();
+        $this->productAvailabilityFacadeMock->method('isProductAvailableOnDomainCached')->willReturn($isProductAvailableOnStock);
 
         $this->googleFeedItemFactory = new GoogleFeedItemFactory(
             $this->productPriceCalculationForCustomerUserMock,
             $this->currencyFacadeMock,
             $this->productUrlsBatchLoaderMock,
+            $this->productAvailabilityFacadeMock,
         );
 
         $this->defaultCurrency = $this->createCurrencyMock(1, 'EUR');
@@ -61,8 +78,7 @@ class GoogleFeedItemTest extends TestCase
 
         $this->defaultProduct = $this->createMock(Product::class);
         $this->defaultProduct->method('getId')->willReturn(1);
-        $this->defaultProduct->method('getName')->with('en')->willReturn('product name');
-        $this->defaultProduct->method('getCalculatedSellingDenied')->willReturn(false);
+        $this->defaultProduct->method('getFullName')->with('en')->willReturn('product name');
 
         $this->mockProductPrice($this->defaultProduct, $this->defaultDomain, Price::zero());
         $this->mockProductUrl($this->defaultProduct, $this->defaultDomain, 'https://example.com/product-1');
@@ -138,7 +154,7 @@ class GoogleFeedItemTest extends TestCase
             ->with($product, $domain)->willReturn($url);
     }
 
-    public function testMinimalGoogleFeedItemIsCreatable()
+    public function testMinimalGoogleFeedItemIsCreatable(): void
     {
         $googleFeedItem = $this->googleFeedItemFactory->create($this->defaultProduct, $this->defaultDomain);
 
@@ -158,7 +174,7 @@ class GoogleFeedItemTest extends TestCase
         self::assertEquals([], $googleFeedItem->getIdentifiers());
     }
 
-    public function testGoogleFeedItemWithBrand()
+    public function testGoogleFeedItemWithBrand(): void
     {
         /** @var \Shopsys\FrameworkBundle\Model\Product\Brand\Brand|\PHPUnit\Framework\MockObject\MockObject $brand */
         $brand = $this->createMock(Brand::class);
@@ -170,7 +186,7 @@ class GoogleFeedItemTest extends TestCase
         self::assertEquals('brand name', $googleFeedItem->getBrand());
     }
 
-    public function testGoogleFeedItemWithDescription()
+    public function testGoogleFeedItemWithDescription(): void
     {
         $this->defaultProduct->method('getDescriptionAsPlainText')
             ->with(1)->willReturn('product description');
@@ -180,7 +196,7 @@ class GoogleFeedItemTest extends TestCase
         self::assertEquals('product description', $googleFeedItem->getDescription());
     }
 
-    public function testGoogleFeedItemWithImageLink()
+    public function testGoogleFeedItemWithImageLink(): void
     {
         $this->mockProductImageUrl($this->defaultProduct, $this->defaultDomain, 'https://example.com/img/product/1');
 
@@ -189,14 +205,11 @@ class GoogleFeedItemTest extends TestCase
         self::assertEquals('https://example.com/img/product/1', $googleFeedItem->getImageLink());
     }
 
-    public function testGoogleFeedItemWithSellingDenied()
+    public function testGoogleFeedItemOutOfStock(): void
     {
-        $product = $this->createMock(Product::class);
-        $product->method('getId')->willReturn(1);
-        $product->method('getName')->with('en')->willReturn('product name');
-        $product->method('getCalculatedSellingDenied')->willReturn(true);
+        $this->doSetUp(false);
 
-        $googleFeedItem = $this->googleFeedItemFactory->create($product, $this->defaultDomain);
+        $googleFeedItem = $this->googleFeedItemFactory->create($this->defaultProduct, $this->defaultDomain);
 
         self::assertEquals('out_of_stock', $googleFeedItem->getAvailability());
     }

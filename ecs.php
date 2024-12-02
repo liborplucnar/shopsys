@@ -73,6 +73,7 @@ return ECSConfig::configure()
                 'Shopsys\MigrationBundle\Command',
                 'Shopsys\MigrationBundle\Component',
                 'Shopsys\ProductFeed\GoogleBundle\Model',
+                'Shopsys\ProductFeed\MergadoBundle\Model',
                 'Shopsys\ProductFeed\HeurekaBundle\Model',
                 'Shopsys\ProductFeed\HeurekaDeliveryBundle\Model',
                 'Shopsys\ProductFeed\LuigisBoxBundle\Model',
