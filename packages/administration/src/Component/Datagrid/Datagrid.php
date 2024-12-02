@@ -64,10 +64,12 @@ final class Datagrid
         $resolver->setDefaults([
             'name' => 'datagrid',
             'crudConfig' => null,
+            'pagination' => true,
         ]);
 
         $resolver->setAllowedTypes('name', 'string');
         $resolver->setAllowedTypes('crudConfig', [CrudConfigData::class, 'null']);
+        $resolver->setAllowedTypes('pagination', 'bool');
 
         return $resolver->resolve($options);
     }
@@ -87,6 +89,16 @@ final class Datagrid
         $this->identificationName = $name;
 
         return $this;
+    }
+
+    /**
+     * Enable or disable pagination in datagrid
+     *
+     * @param bool $pagination
+     */
+    public function setPagination(bool $pagination): void
+    {
+        $this->options['pagination'] = $pagination;
     }
 
     /**
@@ -188,7 +200,9 @@ final class Datagrid
             }
         }
 
-        $grid->enablePaging();
+        if ($this->options['pagination'] === true) {
+            $grid->enablePaging();
+        }
 
         return $grid->createView();
     }

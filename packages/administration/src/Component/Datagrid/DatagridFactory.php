@@ -9,7 +9,8 @@ use Shopsys\AdministrationBundle\Component\Datagrid\Adapter\AdapterInterface;
 /**
  * @phpstan-type DatagridOptions array{
  *     name?: string,
- *     crudConfig?: \Shopsys\AdministrationBundle\Component\Config\CrudConfigData|null
+ *     crudConfig?: \Shopsys\AdministrationBundle\Component\Config\CrudConfigData|null,
+ *     pagination?: bool,
  * }
  */
 final class DatagridFactory
