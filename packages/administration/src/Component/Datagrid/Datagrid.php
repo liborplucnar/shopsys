@@ -95,10 +95,13 @@ final class Datagrid
      * Enable or disable pagination in datagrid
      *
      * @param bool $pagination
+     * @return $this
      */
-    public function setPagination(bool $pagination): void
+    public function setPagination(bool $pagination): self
     {
         $this->options['pagination'] = $pagination;
+
+        return $this;
     }
 
     /**
