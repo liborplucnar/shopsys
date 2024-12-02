@@ -62,6 +62,7 @@ class QueryPaginator implements PaginatorInterface
 
         $query = $queryBuilder->getQuery();
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, SortableNullsWalker::class);
+        $query->setHint(Query::HINT_INCLUDE_META_COLUMNS, true);
 
         $results = $query->execute(null, $this->hydrationMode);
 

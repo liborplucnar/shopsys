@@ -52,20 +52,6 @@ final class ProxyQuery
             return;
         }
 
-        $rootAlias = $this->rootAlias;
-
-        if (str_contains($select, '.') === false) {
-            $classMetadata = $this->entityManager->getClassMetadata($this->entityClass);
-
-            if (!in_array($select, $classMetadata->getFieldNames(), true)) {
-                throw new InvalidArgumentException('Field "' . $select . '" not found in entity ' . $this->entityClass);
-            }
-
-            $this->queryBuilder->addSelect($rootAlias . '.' . $select . ' AS ' . $select);
-
-            return;
-        }
-
         $this->processDotNotation($select);
     }
 
@@ -79,17 +65,23 @@ final class ProxyQuery
 
         $currentClassMetadata = $this->entityManager->getClassMetadata($this->entityClass);
 
-        // dot notation is processed from left to right and each part is joined with left join
+        // dot notation is processed from left to right and each part is joined
         // the last part is added to select
 
         foreach ($parts as $index => $part) {
             $path = implode('.', array_slice($parts, 0, $index + 1));
-            $joinAlias = $part;
-
+            $joinAlias = $part . '_join';
 
             if ($index >= count($parts) - 1) {
                 if ($currentClassMetadata->hasField($part)) {
                     $this->queryBuilder->addSelect("{$alias}.{$part}" . ' AS ' . $this->getAlias($path));
+
+                    continue;
+                }
+
+                if ($currentClassMetadata->hasAssociation($part)) {
+                    $this->joinAssociation($currentClassMetadata, $path, $part, $alias, $joinAlias);
+                    $this->queryBuilder->addSelect("{$joinAlias}" . ' AS ' . $this->getAlias($path));
 
                     continue;
                 }
@@ -154,14 +146,15 @@ final class ProxyQuery
 
         $this->joins[$pathToJoin] = $joinAlias;
 
-        if ($fieldName !== 'translations') {
-            $this->queryBuilder->leftJoin("{$currentAlias}.{$fieldName}", $joinAlias);
+        if ($fieldName === 'translations') {
+            $this->queryBuilder->leftJoin("{$currentAlias}.{$fieldName}", $joinAlias, Join::WITH, "{$joinAlias}.locale = :{$joinAlias}_locale");
+            $this->queryBuilder->setParameter("{$joinAlias}_locale", $this->locale);
 
             return;
         }
 
-        $this->queryBuilder->leftJoin("{$currentAlias}.translations", $joinAlias, Join::WITH, "{$joinAlias}.locale = :{$joinAlias}_locale");
-        $this->queryBuilder->setParameter("{$joinAlias}_locale", $this->locale);
+        $associationMapping = $classMetadata->getAssociationMapping($fieldName);
+        $this->queryBuilder->leftJoin($associationMapping['targetEntity'], $joinAlias, Join::WITH, "{$currentAlias}.{$fieldName} = {$joinAlias}.id");
     }
 
     /**
