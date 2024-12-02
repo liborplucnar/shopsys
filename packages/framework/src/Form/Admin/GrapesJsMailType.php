@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Form\Admin;
+namespace Shopsys\FrameworkBundle\Form\Admin;
 
 use Shopsys\FrameworkBundle\Form\Transformers\WysiwygCdnDataTransformer;
 use Symfony\Component\Form\AbstractType;
@@ -63,11 +63,6 @@ class GrapesJsMailType extends AbstractType
             ->setAllowedTypes('body_variables', 'array')
             ->setDefaults([
                 'body_variables' => [],
-                'entry_options' => [
-                    'attr' => [
-                        'class' => 'js-grapesjs-mail_textarea',
-                    ],
-                ],
             ]);
     }
 }
