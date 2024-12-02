@@ -129,7 +129,12 @@ class Grid
      * @param string $sourceColumnName
      * @param string $title
      * @param bool $sortable
-     * @param array{template?: string, help?: string }&array<string, mixed> $options
+     * @param array $options
+     *     template?: string,
+     *     help?: string,
+     *     templateParameters?: array<string, mixed>,
+     *     normalize?: callable(mixed $value, mixed $row): mixed,
+     * }&array<string, mixed> $options
      * @return \Shopsys\FrameworkBundle\Component\Grid\Column
      */
     public function addColumn($id, $sourceColumnName, $title, $sortable = false, array $options = [])
@@ -662,6 +667,10 @@ class Grid
      */
     public static function getValueFromRowBySourceColumnName(array $row, $sourceColumnName)
     {
+        if (array_key_exists($sourceColumnName, $row)) {
+            return $row[$sourceColumnName];
+        }
+
         $sourceColumnNameParts = explode('.', $sourceColumnName);
 
         if (count($sourceColumnNameParts) === 1) {

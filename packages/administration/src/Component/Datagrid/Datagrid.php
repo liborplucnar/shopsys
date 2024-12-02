@@ -176,6 +176,10 @@ final class Datagrid
 
                 $grid->addColumn($field->getName(), $field->getName(), $field->getLabel(), $field->isSortable(), [
                     'template' => $field->getTemplate(),
+                    'templateParameters' => $field->prepareTemplateParameters(),
+                    'normalize' => function ($value, $row) use ($field) {
+                        return $field->normalize($value, $row);
+                    },
                     'help' => $field->getHelp(),
                 ]);
             }

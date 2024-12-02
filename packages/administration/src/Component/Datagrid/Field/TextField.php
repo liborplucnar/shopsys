@@ -7,7 +7,7 @@ namespace Shopsys\AdministrationBundle\Component\Datagrid\Field;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @phpstan-type FieldOptions array{
+ * @phpstan-type TextFieldOptions array{
  *     label?: string|null,
  *     visible?: bool,
  *     template?: string|null,
@@ -15,9 +15,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *     help?: string|null,
  *     sortable?: bool,
  *  }
- *
- * TODO: Somehow fix ecs to not edit FieldOptions to FCQN
- * @extends \Shopsys\AdministrationBundle\Component\Datagrid\Field\AbstractField<FieldOptions>
+ * @extends \Shopsys\AdministrationBundle\Component\Datagrid\Field\AbstractField<TextFieldOptions>
+ * @template TOptions of array
  */
 class TextField extends AbstractField
 {

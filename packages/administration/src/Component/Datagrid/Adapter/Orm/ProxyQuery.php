@@ -99,11 +99,18 @@ final class ProxyQuery
                 throw new InvalidArgumentException('Field "' . $part . '" not found in entity ' . $currentClassMetadata->getName());
             }
 
+            // If next part is last and is primary key, select it as identity without join
+            if ($this->isNextPartLastAndIdentity($parts, $index, $currentClassMetadata)) {
+                $path = implode('.', $parts);
+
+                $this->queryBuilder->addSelect("IDENTITY({$alias}.{$part})" . ' AS ' . $this->getAlias($path));
+
+                break;
+            }
+
             $this->joinAssociation($currentClassMetadata, $path, $part, $alias, $joinAlias);
 
-            $currentClassMetadata = $this->entityManager->getClassMetadata(
-                $currentClassMetadata->getAssociationTargetClass($part),
-            );
+            $currentClassMetadata = $this->getClassMetadataForTarget($part, $currentClassMetadata);
 
             $alias = $joinAlias;
         }
@@ -116,6 +123,36 @@ final class ProxyQuery
     private function getAlias($part): string
     {
         return str_replace('.', '__', $part);
+    }
+
+    /**
+     * @param string[] $parts
+     * @param int $currentIndex
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $classMetadata
+     * @return bool
+     */
+    private function isNextPartLastAndIdentity(array $parts, int $currentIndex, ClassMetadata $classMetadata): bool
+    {
+        // check if next iteration will be last part of dot notation
+        if ($currentIndex >= count($parts) - 1) {
+            return false;
+        }
+
+        // check if next part is primary key
+        $nextPart = $parts[$currentIndex + 1];
+        $associationClassMetadata = $this->getClassMetadataForTarget($parts[$currentIndex], $classMetadata);
+
+        return in_array($nextPart, $associationClassMetadata->getIdentifier(), true) !== false;
+    }
+
+    /**
+     * @param string $part
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $currentClassMetadata
+     * @return \Doctrine\ORM\Mapping\ClassMetadata
+     */
+    private function getClassMetadataForTarget(string $part, ClassMetadata $currentClassMetadata): ClassMetadata
+    {
+        return $this->entityManager->getClassMetadata($currentClassMetadata->getAssociationTargetClass($part));
     }
 
     /**

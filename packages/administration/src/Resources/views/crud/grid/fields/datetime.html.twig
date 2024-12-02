@@ -1,0 +1,8 @@
+{% if type == 'datetime' %}
+    {{ value|formatDateTime }}
+{% elseif type == 'date' %}
+    {{ value|formatDate }}
+{% else %}
+    {{ value|formatTime }}
+{% endif %}
+

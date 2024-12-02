@@ -94,4 +94,24 @@ abstract class AbstractField
 
         return $optionsResolver->resolve($options);
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function prepareTemplateParameters(): array
+    {
+        return [];
+    }
+
+    /**
+     * Normalize value before rendering in template
+     *
+     * @param mixed $value
+     * @param array $row
+     * @return mixed
+     */
+    public function normalize($value, $row): mixed
+    {
+        return $value;
+    }
 }

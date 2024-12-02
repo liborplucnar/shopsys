@@ -111,6 +111,8 @@ class GridView
             $value = null;
         }
 
+        $value = $column->normalizeValue($value, $row);
+
         $blockParameters = [
             'value' => $value,
             'row' => $row,
@@ -119,6 +121,8 @@ class GridView
         ];
 
         if ($column->getTemplate() !== null) {
+            $blockParameters = array_merge($blockParameters, $column->getTemplateParameters());
+
             echo $this->twig->render($column->getTemplate(), $this->twig->mergeGlobals($blockParameters));
 
             return;
