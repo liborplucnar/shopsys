@@ -30,7 +30,7 @@ final class OrmAdapter implements AdapterInterface
     /**
      * @param class-string $entityClass
      * @param string $identificationName
-     * @param array<string, \Shopsys\AdministrationBundle\Component\Datagrid\Field\AbstractField> $fields
+     * @param array<string, \Shopsys\AdministrationBundle\Component\Datagrid\Field\TextField> $fields
      * @return \Shopsys\FrameworkBundle\Component\Grid\DataSourceInterface
      */
     public function getDatasource(string $entityClass, string $identificationName, array $fields): DataSourceInterface

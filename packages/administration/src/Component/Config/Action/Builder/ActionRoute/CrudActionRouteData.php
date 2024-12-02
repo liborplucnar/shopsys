@@ -17,7 +17,7 @@ class CrudActionRouteData implements ActionRouteInterface
     public function __construct(
         private readonly string $crudController,
         private readonly ActionType $actionType,
-        private $id,
+        private $id = null,
     ) {
     }
 

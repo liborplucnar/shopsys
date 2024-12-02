@@ -9,7 +9,7 @@ use ReflectionClass;
 
 final class CrudConfigData
 {
-    public string $entityName;
+    private string $entityName;
 
     public array $customPageTitles = [
         ActionType::CREATE->value => null,
@@ -36,9 +36,10 @@ final class CrudConfigData
     public ?string $routePrefix = null;
 
     /**
+     * @param class-string<\Shopsys\AdministrationBundle\Controller\AbstractCrudController> $crudController
      * @param class-string $entityClass
      */
-    public function __construct(private string $entityClass)
+    public function __construct(private string $crudController, private string $entityClass)
     {
         $this->entityName = (new ReflectionClass($entityClass))->getShortName();
         $this->enabledActions = new ArrayCollection([ActionType::LIST, ActionType::CREATE, ActionType::EDIT, ActionType::DETAIL, ActionType::DELETE]);
@@ -51,6 +52,14 @@ final class CrudConfigData
         ];
 
         $this->menuTitle = t('%entity_name% Overview', ['%entity_name%' => $this->entityName]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCrudController(): string
+    {
+        return $this->crudController;
     }
 
     /**
@@ -108,6 +117,15 @@ final class CrudConfigData
         }
 
         $this->enabledActions->add($actionType);
+    }
+
+    /**
+     * @param \Shopsys\AdministrationBundle\Component\Config\ActionType $actionType
+     * @return bool
+     */
+    public function isActionEnabled(ActionType $actionType): bool
+    {
+        return $this->enabledActions->contains($actionType);
     }
 
     /**

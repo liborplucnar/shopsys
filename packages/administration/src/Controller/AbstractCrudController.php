@@ -66,7 +66,10 @@ abstract class AbstractCrudController extends AbstractController
      */
     public function listAction(): Response
     {
-        $datagrid = $this->datagridFactory->create($this->getConfig()->getEntityClass(), $this->adapter);
+        $datagrid = $this->datagridFactory->create($this->getConfig()->getEntityClass(), $this->adapter, [
+            'crudConfig' => $this->getConfig(),
+            'name' => $this->getConfig()->getEntityName(),
+        ]);
         $this->configureDatagrid($datagrid);
 
 
@@ -78,10 +81,10 @@ abstract class AbstractCrudController extends AbstractController
     }
 
     /**
-     * @param int $id
+     * @param int $entityId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editAction(int $id): Response
+    public function editAction(int $entityId): Response
     {
         return $this->render('@ShopsysAdministration/crud/edit.html.twig', [
             'title' => $this->getConfig()->getTitle(ActionType::EDIT),
@@ -90,9 +93,10 @@ abstract class AbstractCrudController extends AbstractController
     }
 
     /**
+     * @param int $entityId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function createAction(): Response
+    public function createAction(int $entityId): Response
     {
         return $this->render('@ShopsysAdministration/crud/new.html.twig', [
             'title' => $this->getConfig()->getTitle(ActionType::CREATE),
@@ -101,9 +105,10 @@ abstract class AbstractCrudController extends AbstractController
     }
 
     /**
+     * @param int $entityId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteAction(): Response
+    public function deleteAction(int $entityId): Response
     {
         return $this->redirect($this->generateUrl('admin_default_dashboard'));
     }
@@ -135,7 +140,7 @@ abstract class AbstractCrudController extends AbstractController
             }
 
             $entityClass = $attributes[0]->newInstance()->entityClass;
-            $this->config = $this->configure(new CrudConfig($entityClass))->getConfig();
+            $this->config = $this->configure(new CrudConfig(static::class, $entityClass))->getConfig();
         }
 
         return $this->config;

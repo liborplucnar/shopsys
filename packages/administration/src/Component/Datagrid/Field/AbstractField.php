@@ -7,9 +7,7 @@ namespace Shopsys\AdministrationBundle\Component\Datagrid\Field;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * TODO: Create extended type hints
- *
- * @template-covariant TOptions of array<string, mixed>
+ * @template TOptions of array
  */
 abstract class AbstractField
 {
@@ -37,18 +35,12 @@ abstract class AbstractField
         $optionsResolver->setDefaults([
             'label' => $this->name,
             'visible' => true,
-            'sortable' => true,
             'template' => '@ShopsysAdministration/crud/grid/fields/basic.html.twig',
-            'virtual' => false,
-            'help' => null,
         ]);
 
         $optionsResolver->setAllowedTypes('label', 'string');
         $optionsResolver->setAllowedTypes('visible', 'bool');
-        $optionsResolver->setAllowedTypes('sortable', 'bool');
         $optionsResolver->setAllowedTypes('template', ['string', 'null']);
-        $optionsResolver->setAllowedTypes('virtual', 'bool');
-        $optionsResolver->setAllowedTypes('help', ['string', 'null']);
     }
 
     /**
@@ -76,35 +68,11 @@ abstract class AbstractField
     }
 
     /**
-     * @return bool
-     */
-    public function isSortable(): bool
-    {
-        return $this->options['sortable'];
-    }
-
-    /**
      * @return string|null
      */
     public function getTemplate(): ?string
     {
         return $this->options['template'];
-    }
-
-    /**
-     * @return bool
-     */
-    public function isVirtual(): bool
-    {
-        return $this->options['virtual'];
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getHelp(): ?string
-    {
-        return $this->options['help'];
     }
 
     /**
@@ -116,8 +84,8 @@ abstract class AbstractField
     }
 
     /**
-     * @param array $options
-     * @return array
+     * @param TOptions $options
+     * @return TOptions
      */
     private function resolveOptions(array $options): array
     {
