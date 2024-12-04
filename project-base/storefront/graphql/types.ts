@@ -1669,6 +1669,8 @@ export type TypeOrder = {
   isDeliveryAddressDifferentFromBilling: Scalars['Boolean']['output'];
   /** Indicates whether the order is paid successfully with GoPay payment type */
   isPaid: Scalars['Boolean']['output'];
+  /** Indicates whether the order is payment processing with GoPay payment type */
+  isPaymentInProcess: Scalars['Boolean']['output'];
   /** All items in the order including payment and transport */
   items: Array<TypeOrderItem>;
   /** The customer's last name */

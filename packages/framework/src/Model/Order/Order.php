@@ -464,6 +464,20 @@ class Order
     }
 
     /**
+     * @return bool
+     */
+    public function isPaymentInProcess(): bool
+    {
+        foreach ($this->paymentTransactions as $paymentTransaction) {
+            if ($paymentTransaction->isPaymentInProcess()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return int
      */
     public function getPaymentTransactionsCount(): int
