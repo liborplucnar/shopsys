@@ -8,6 +8,7 @@ use Hybridauth\Exception\InvalidArgumentException;
 use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Hybridauth;
 use Hybridauth\User\Profile;
+use Monolog\Logger;
 use Shopsys\FrameworkBundle\Component\Domain\Domain;
 use Shopsys\FrameworkBundle\Model\Customer\Exception\DuplicateEmailException;
 use Shopsys\FrameworkBundle\Model\Customer\User\CustomerUserFacade;
@@ -22,7 +23,6 @@ use Shopsys\FrontendApiBundle\Model\Security\LoginAsUserFacade;
 use Shopsys\FrontendApiBundle\Model\Security\LoginResultData;
 use Shopsys\FrontendApiBundle\Model\Security\LoginResultDataFactory;
 use Shopsys\FrontendApiBundle\Model\SocialNetwork\Exception\SocialNetworkLoginException;
-use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
@@ -35,7 +35,7 @@ class SocialNetworkFacade
      * @param \Shopsys\FrontendApiBundle\Model\Customer\User\RegistrationDataFactory $registrationDataFactory
      * @param \Shopsys\FrontendApiBundle\Model\Customer\User\RegistrationFacade $registrationFacade
      * @param \Shopsys\FrontendApiBundle\Model\SocialNetwork\SocialNetworkConfigFactory $socialNetworkConfigFactory
-     * @param \Symfony\Bridge\Monolog\Logger $logger
+     * @param \Monolog\Logger $logger
      * @param \Shopsys\FrameworkBundle\Model\Customer\User\CustomerUserFacade $customerUserFacade
      * @param \Shopsys\FrontendApiBundle\Model\Security\LoginAsUserFacade $loginAsUserFacade
      * @param \Symfony\Component\Validator\Validator\ValidatorInterface $validator
@@ -92,39 +92,19 @@ class SocialNetworkFacade
             }
             $adapter->disconnect();
 
-            $cartUuid = $session->get(SocialNetworkController::CART_UUID);
-            $shouldOverwriteCustomerUserCart = $session->get(SocialNetworkController::SHOULD_OVERWRITE_CART);
-
-            $showCartMergeInfo = false;
-
-            if ($cartUuid !== null) {
-                if ($shouldOverwriteCustomerUserCart) {
-                    $this->mergeCartFacade->overwriteCustomerCartWithCartByUuid($cartUuid, $customerUser);
-                } else {
-                    $this->mergeCartFacade->mergeCartByUuidToCustomerCart($cartUuid, $customerUser);
-                    $showCartMergeInfo = true;
-                }
-            }
-
-            $productListsUuids = $session->get(SocialNetworkController::PRODUCT_LIST_UUIDS);
-
-            if ($productListsUuids !== null) {
-                $this->productListFacade->mergeProductListsToCustomerUser(explode(',', $productListsUuids), $customerUser);
-            }
+            $loginResultData = $this->loginAsUserFacade->runLoginSteps(
+                $customerUser,
+                $type,
+                $isRegistration,
+                explode(',', $session->get(SocialNetworkController::PRODUCT_LIST_UUIDS)),
+                $session->get(SocialNetworkController::SHOULD_OVERWRITE_CART),
+                $session->get(SocialNetworkController::CART_UUID),
+                (string)$userProfile->identifier,
+            );
 
             $session->remove(SocialNetworkController::CART_UUID);
             $session->remove(SocialNetworkController::SHOULD_OVERWRITE_CART);
             $session->remove(SocialNetworkController::PRODUCT_LIST_UUIDS);
-
-            $loginResultData = $this->loginResultDataFactory->create(
-                $this->loginAsUserFacade->loginAndReturnAccessAndRefreshToken($customerUser),
-                $showCartMergeInfo,
-                $isRegistration,
-            );
-
-            $this->customerUserLoginTypeFacade->updateCustomerUserLoginTypes(
-                $this->customerUserLoginTypeDataFactory->create($customerUser, $type, (string)$userProfile->identifier),
-            );
 
             return $loginResultData;
         } catch (InvalidArgumentException | UnexpectedValueException $exception) {
