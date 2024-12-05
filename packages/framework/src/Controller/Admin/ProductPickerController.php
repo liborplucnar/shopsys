@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shopsys\FrameworkBundle\Controller\Admin;
 
+use Shopsys\FrameworkBundle\Component\Cache\InMemoryCache;
 use Shopsys\FrameworkBundle\Component\Grid\GridFactory;
 use Shopsys\FrameworkBundle\Component\Grid\QueryBuilderWithRowManipulatorDataSource;
 use Shopsys\FrameworkBundle\Form\Admin\QuickSearch\QuickSearchFormData;
@@ -13,17 +14,23 @@ use Shopsys\FrameworkBundle\Model\AdvancedSearch\AdvancedSearchProductFacade;
 use Shopsys\FrameworkBundle\Model\Product\Listing\ProductListAdminFacade;
 use Shopsys\FrameworkBundle\Model\Product\Product;
 use Shopsys\FrameworkBundle\Model\Product\ProductFacade;
+use Shopsys\FrameworkBundle\Model\Product\ProductVisibilityFacade;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductPickerController extends AdminBaseController
 {
+    protected const string PRODUCT_VISIBILITIES_EACH_DOMAIN_CACHE = 'PRODUCT_VISIBILITIES_EACH_DOMAIN_CACHE';
+    protected const string PRODUCT_VISIBILITIES_SOME_DOMAIN_CACHE = 'PRODUCT_VISIBILITIES_SOME_DOMAIN_CACHE';
+
     /**
      * @param \Shopsys\FrameworkBundle\Model\Administrator\AdministratorGridFacade $administratorGridFacade
      * @param \Shopsys\FrameworkBundle\Component\Grid\GridFactory $gridFactory
      * @param \Shopsys\FrameworkBundle\Model\Product\Listing\ProductListAdminFacade $productListAdminFacade
      * @param \Shopsys\FrameworkBundle\Model\AdvancedSearch\AdvancedSearchProductFacade $advancedSearchProductFacade
      * @param \Shopsys\FrameworkBundle\Model\Product\ProductFacade $productFacade
+     * @param \Shopsys\FrameworkBundle\Component\Cache\InMemoryCache $inMemoryCache
+     * @param \Shopsys\FrameworkBundle\Model\Product\ProductVisibilityFacade $productVisibilityFacade
      */
     public function __construct(
         protected readonly AdministratorGridFacade $administratorGridFacade,
@@ -31,6 +38,8 @@ class ProductPickerController extends AdminBaseController
         protected readonly ProductListAdminFacade $productListAdminFacade,
         protected readonly AdvancedSearchProductFacade $advancedSearchProductFacade,
         protected readonly ProductFacade $productFacade,
+        protected readonly InMemoryCache $inMemoryCache,
+        protected readonly ProductVisibilityFacade $productVisibilityFacade,
     ) {
     }
 
@@ -109,13 +118,20 @@ class ProductPickerController extends AdminBaseController
         $dataSource = new QueryBuilderWithRowManipulatorDataSource(
             $queryBuilder,
             'p.id',
-            function ($row) {
-                $product = $this->productFacade->getById($row['p']['id']);
-                $row['product'] = $product;
-                // actual visibility is rendered in the template, this is just a placeholder for column
-                $row['visibility'] = null;
+            function ($product, $products) {
+                $product['isVisible'] = $this->isProductVisibleForDefaultPricingGroupOnEachDomain(
+                    array_column($products, 'id'),
+                    $product['id'],
+                );
+                $product['isVisibleOnSomeDomain'] = $this->isProductVisibleForDefaultPricingGroupOnSomeDomain(
+                    array_column($products, 'id'),
+                    $product['id'],
+                );
 
-                return $row;
+                // actual visibility is rendered in the template, this is just a placeholder for column
+                $product['visibility'] = null;
+
+                return $product;
             },
         );
 
@@ -143,5 +159,39 @@ class ProductPickerController extends AdminBaseController
         );
 
         return $this->render('@ShopsysFramework/Admin/Content/ProductPicker/list.html.twig', $viewParameters);
+    }
+
+    /**
+     * @param int[] $productIds
+     * @param int $productId
+     * @return bool
+     */
+    protected function isProductVisibleForDefaultPricingGroupOnEachDomain(array $productIds, int $productId): bool
+    {
+        $return = $this->inMemoryCache->getOrSaveValue(
+            self::PRODUCT_VISIBILITIES_EACH_DOMAIN_CACHE,
+            fn () => $this->productVisibilityFacade->areProductsVisibleForDefaultPricingGroupOnEachDomainIndexedByProductId($productIds),
+            self::PRODUCT_VISIBILITIES_EACH_DOMAIN_CACHE,
+            ...$productIds,
+        );
+
+        return $return[$productId];
+    }
+
+    /**
+     * @param int[] $productIds
+     * @param int $productId
+     * @return bool
+     */
+    protected function isProductVisibleForDefaultPricingGroupOnSomeDomain(array $productIds, int $productId): bool
+    {
+        $return = $this->inMemoryCache->getOrSaveValue(
+            self::PRODUCT_VISIBILITIES_SOME_DOMAIN_CACHE,
+            fn () => $this->productVisibilityFacade->areProductsVisibleForDefaultPricingGroupOnSomeDomainIndexedByProductId($productIds),
+            self::PRODUCT_VISIBILITIES_SOME_DOMAIN_CACHE,
+            ...$productIds,
+        );
+
+        return $return[$productId];
     }
 }
