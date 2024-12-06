@@ -1,3 +1,4 @@
+import { WatchdogIcon } from 'components/Basic/Icon/Watchdog';
 import { Button } from 'components/Forms/Button/Button';
 import { TypeAvailability, TypeAvailabilityStatusEnum } from 'graphql/types';
 import useTranslation from 'next-translate/useTranslation';
@@ -46,7 +47,7 @@ export const ProductAvailability: FC<ProductAvailabilityProps> = ({
         productIsSellingDenied;
 
     return (
-        <div className="flex flex-col gap-1">
+        <>
             <div
                 className={twJoin(
                     className,
@@ -65,10 +66,11 @@ export const ProductAvailability: FC<ProductAvailabilityProps> = ({
             </div>
 
             {showWatchdogButton && (
-                <Button className="mr-auto" variant="inverted" onClick={openWatchDogPopup}>
+                <Button className="mr-auto" size="large" variant="primary" onClick={openWatchDogPopup}>
+                    <WatchdogIcon className="size-6" />
                     {t('Watch the goods')}
                 </Button>
             )}
-        </div>
+        </>
     );
 };
