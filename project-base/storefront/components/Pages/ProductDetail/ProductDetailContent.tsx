@@ -97,6 +97,8 @@ export const ProductDetailContent: FC<ProductDetailContentProps> = ({ product, i
                                 availability={product.availability}
                                 availableStoresCount={product.availableStoresCount}
                                 isInquiryType={product.isInquiryType}
+                                productIsSellingDenied={product.isSellingDenied}
+                                productUuid={product.uuid}
                                 className={twJoin(
                                     'mr-1 flex items-center font-secondary',
                                     product.availability.status === TypeAvailabilityStatusEnum.InStock &&
