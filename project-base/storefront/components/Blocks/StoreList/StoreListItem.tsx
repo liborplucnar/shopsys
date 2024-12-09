@@ -48,12 +48,21 @@ export const StoreListItem: FC<StoreListItemProps> = ({ store, isSelected }) => 
         >
             <div className="flex items-center justify-between gap-3.5">
                 <div className="w-full items-center justify-between xl:flex">
-                    <div className="max-xl:mb-2.5">
+                    <div className="max-xl:mb-2.5 xl:w-[215px]">
                         <h5>{store.name}</h5>
                         <p className="mt-1.5 text-xs">
                             {store.street}, {store.postcode} {store.city}
                         </p>
                     </div>
+                    {store.distance && (
+                        <div className="max-xl:hidden">
+                            <p className="text-xs text-inputPlaceholder">
+                                {t('{{ distance }} km from you', {
+                                    distance: (store.distance / 1000).toFixed(0),
+                                })}
+                            </p>
+                        </div>
+                    )}
                     <div className="flex items-center xl:block xl:text-right" tid={TIDs.store_opening_status}>
                         <OpeningStatus className="xl:mb-1.5" status={store.openingHours.status} />
                         <p className="ml-2.5 text-xs" tid={TIDs.store_opening_hours}>
