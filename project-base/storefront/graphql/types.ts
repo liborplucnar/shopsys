@@ -1344,6 +1344,8 @@ export type TypeMutation = {
   Register: TypeLoginResult;
   /** Register new customer user using an order data */
   RegisterByOrder: TypeLoginResult;
+  /** Remove cart */
+  RemoveCart: Scalars['Boolean']['output'];
   /** delete customer user */
   RemoveCustomerUser: Scalars['Boolean']['output'];
   /** Remove product from cart */
@@ -1492,6 +1494,11 @@ export type TypeMutationRegisterArgs = {
 
 export type TypeMutationRegisterByOrderArgs = {
   input: TypeRegistrationByOrderInput;
+};
+
+
+export type TypeMutationRemoveCartArgs = {
+  input: TypeRemoveCartInput;
 };
 
 
@@ -3000,6 +3007,11 @@ export type TypeRegularProductImagesArgs = {
 /** Represents a product */
 export type TypeRegularProductMainImageArgs = {
   type?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type TypeRemoveCartInput = {
+  /** Cart UUID to be removed or null for logged customer user */
+  cartUuid: InputMaybe<Scalars['Uuid']['input']>;
 };
 
 export type TypeRemoveCustomerUserDataInput = {
