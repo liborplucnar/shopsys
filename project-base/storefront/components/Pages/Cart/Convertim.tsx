@@ -8,6 +8,7 @@ import {
     GetTransportsType,
 } from 'convertim-react-lib';
 import { TypeCartFragment } from 'graphql/requests/cart/fragments/CartFragment.generated';
+import { useRemoveCartMutation } from 'graphql/requests/cart/mutations/RemoveCartMutation.generated';
 import { useTransportsWithStoresQuery } from 'graphql/requests/transports/queries/TransportsWithStoresQuery.generated';
 import useTranslation from 'next-translate/useTranslation';
 import { useCallback } from 'react';
@@ -20,6 +21,7 @@ export const Convertim: FC<ConvertimProps> = ({ cart, convertimProjectUuid }) =>
     const { t } = useTranslation();
     const formatPrice = useFormatPrice();
     const updateCartUuid = usePersistStore((store) => store.updateCartUuid);
+    const [, removeCartMutation] = useRemoveCartMutation();
     const [{ data: transportsData, fetching: isTransportsFetching }] = useTransportsWithStoresQuery({
         variables: { cartUuid: cart?.uuid ?? null },
     });
@@ -50,6 +52,7 @@ export const Convertim: FC<ConvertimProps> = ({ cart, convertimProjectUuid }) =>
 
     const handleEventsAfterOrderCreation = () => {
         if (cart?.uuid) {
+            removeCartMutation({ cartUuid: cart.uuid });
             updateCartUuid(null);
         }
     };
