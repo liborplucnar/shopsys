@@ -6,16 +6,45 @@ import { twMergeCustom } from 'utils/twMerge';
 type OrderPaymentStatusBarProps = {
     orderPaymentType: string;
     orderIsPaid: boolean;
-    orderIsPaymentInProcess: boolean;
+    orderHasPaymentInProcess: boolean;
+};
+
+const OrderPaymentStatus: FC<{
+    orderIsPaid: boolean;
+    orderHasPaymentInProcess: boolean;
+}> = ({ orderIsPaid, orderHasPaymentInProcess }) => {
+    const { t } = useTranslation();
+
+    if (orderIsPaid) {
+        return (
+            <>
+                <InfoIconInCircle className="w-4 text-backgroundSuccessMore" />
+                {t('The order was paid')}
+            </>
+        );
+    }
+
+    if (orderHasPaymentInProcess) {
+        <>
+            <InfoIconInCircle className="w-4 text-backgroundWarningMore" />
+            {t('The order is awaiting payment verification.')}
+        </>;
+    }
+
+    return (
+        <>
+            <InfoIconInCircle className="w-4 text-backgroundWarningMore" />
+            {t('The order has not been paid')}
+        </>
+    );
 };
 
 export const OrderPaymentStatusBar: FC<OrderPaymentStatusBarProps> = ({
     orderPaymentType,
     orderIsPaid,
     className,
-    orderIsPaymentInProcess,
+    orderHasPaymentInProcess,
 }) => {
-    const { t } = useTranslation();
     return (
         <>
             {orderPaymentType === PaymentTypeEnum.GoPay && (
@@ -26,22 +55,7 @@ export const OrderPaymentStatusBar: FC<OrderPaymentStatusBarProps> = ({
                         className,
                     )}
                 >
-                    {orderIsPaid ? (
-                        <>
-                            <InfoIconInCircle className="w-4 text-backgroundSuccessMore" />
-                            {t('The order was paid')}
-                        </>
-                    ) : orderIsPaymentInProcess ? (
-                        <>
-                            <InfoIconInCircle className="w-4 text-backgroundWarning" />
-                            {t('The order is awaiting payment verification.')}
-                        </>
-                    ) : (
-                        <>
-                            <InfoIconInCircle className="w-4 text-backgroundWarningMore" />
-                            {t('The order has not been paid')}
-                        </>
-                    )}
+                    <OrderPaymentStatus orderHasPaymentInProcess={orderHasPaymentInProcess} orderIsPaid={orderIsPaid} />
                 </div>
             )}
         </>
