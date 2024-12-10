@@ -63,8 +63,8 @@
             href="#"
             data-product-picker-instance-id="{{ jsInstanceId }}"
             data-product-picker-product-id="{{ row.p.id }}"
+            data-product-picker-domain-id="{{ domainId }}"
             data-product-picker-product-name="{{ row.pt.name }}"
-            data-product-picker-product-price="{{ row.priceForProductList ? row.priceForProductList.amount|round(2) : 0 }}"
             data-product-picker-product-ean="{{ row.p.ean }}"
             data-product-picker-product-catnum="{{ row.p.catnum }}"
         >
@@ -80,7 +80,6 @@
             data-instance-id="{{ parentInstanceId }}"
             data-product-id="{{ row.p.id }}"
             data-product-name="{{ row.pt.name }}"
-            data-product-picker-product-price="{{ row.priceForProductList ? row.priceForProductList.amount|round(2) : 0 }}"
             data-product-picker-product-ean="{{ row.p.ean }}"
             data-product-picker-product-catnum="{{ row.p.catnum }}"
         >
