@@ -6,6 +6,7 @@ namespace Shopsys\ConvertimBundle\Model\Order;
 
 use Convertim\Order\ConvertimOrderData;
 use Convertim\Order\ConvertimOrderDataPaymentStatus;
+use Shopsys\ConvertimBundle\Model\Payment\PaymentTypeEnum;
 use Shopsys\FrameworkBundle\Component\Domain\Domain;
 use Shopsys\FrameworkBundle\Component\Money\Money;
 use Shopsys\FrameworkBundle\Model\Order\Order;
@@ -23,6 +24,7 @@ class OrderFacade
      * @param \Shopsys\ConvertimBundle\Model\Order\OrderRepository $orderRepository
      * @param \Shopsys\FrameworkBundle\Model\Payment\Transaction\PaymentTransactionFacade $paymentTransactionFacade
      * @param \Shopsys\FrameworkBundle\Model\Payment\Transaction\PaymentTransactionDataFactory $paymentTransactionDataFactory
+     * @param \Shopsys\ConvertimBundle\Model\Payment\PaymentTypeEnum $paymentTypeEnum
      */
     public function __construct(
         protected readonly ConvertimOrderDataToOrderDataMapper $convertimOrderDataToOrderMapper,
@@ -31,6 +33,7 @@ class OrderFacade
         protected readonly OrderRepository $orderRepository,
         protected readonly PaymentTransactionFacade $paymentTransactionFacade,
         protected readonly PaymentTransactionDataFactory $paymentTransactionDataFactory,
+        protected readonly PaymentTypeEnum $paymentTypeEnum,
     ) {
     }
 
@@ -49,8 +52,8 @@ class OrderFacade
             $order = $this->placeOrderFacade->placeOrder($orderData, $deliveryAddressUuid);
         }
 
-        if ($order->getPayment()->isGoPay()) {
-            $this->resolveGoPayStatus($order, $convertimOrderData);
+        if (in_array($order->getPayment()->getType(), $this->paymentTypeEnum->getAllCases(), true)) {
+            $this->resolveExternalPaymentStatus($order, $convertimOrderData);
         }
 
         return $order;
@@ -60,11 +63,11 @@ class OrderFacade
      * @param \Shopsys\FrameworkBundle\Model\Order\Order $order
      * @param \Convertim\Order\ConvertimOrderData $convertimOrderData
      */
-    protected function resolveGoPayStatus(Order $order, ConvertimOrderData $convertimOrderData): void
+    protected function resolveExternalPaymentStatus(Order $order, ConvertimOrderData $convertimOrderData): void
     {
         $convertimPaymentStatus = $convertimOrderData->getPaymentStatus();
 
-        if ($convertimPaymentStatus === null || $convertimOrderData->getGoPayData() === null) {
+        if ($convertimPaymentStatus === null) {
             return;
         }
 
