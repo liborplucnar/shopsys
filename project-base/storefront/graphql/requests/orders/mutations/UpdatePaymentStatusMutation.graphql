@@ -5,7 +5,7 @@ mutation UpdatePaymentStatusMutation($orderUuid: Uuid!, $orderPaymentStatusPageV
         payment {
             type
         }
-        isPaymentInProcess
+        hasPaymentInProcess
         urlHash
     }
 }

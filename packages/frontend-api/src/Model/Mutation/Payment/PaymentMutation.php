@@ -44,7 +44,7 @@ class PaymentMutation extends AbstractMutation
             throw new OrderAlreadyPaidUserError('Order is already paid');
         }
 
-        if ($order->isPaymentInProcess()) {
+        if ($order->hasPaymentInProcess()) {
             throw new OrderWaitingForProcessPaymentUserError('Order is awaiting payment verification.');
         }
 

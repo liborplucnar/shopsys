@@ -19,7 +19,7 @@ export const PaymentInProcess: FC<PaymentInProcessProps> = ({ orderUrlHash }) =>
         [{ url: '/order-detail/:urlHash', param: orderUrlHash }],
         url,
     );
-    const gtmStaticPageViewEvent = useGtmStaticPageViewEvent(GtmPageType.payment_success);
+    const gtmStaticPageViewEvent = useGtmStaticPageViewEvent(GtmPageType.payment_in_process);
     useGtmPageViewEvent(gtmStaticPageViewEvent);
 
     return (
@@ -27,7 +27,7 @@ export const PaymentInProcess: FC<PaymentInProcessProps> = ({ orderUrlHash }) =>
             <div className="flex items-center gap-6">
                 <HeartIcon className="text-green h-20 w-20" />
                 <h1 className="mb-0">
-                    {t('The payment is being processed, you can check the status on the order details')}
+                    {t('The payment is being processed, you can check the status on the order detail page')}
                 </h1>
             </div>
             <a className="w-fit" href={orderDetailUrl}>

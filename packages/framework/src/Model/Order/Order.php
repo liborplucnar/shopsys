@@ -466,10 +466,10 @@ class Order
     /**
      * @return bool
      */
-    public function isPaymentInProcess(): bool
+    public function hasPaymentInProcess(): bool
     {
         foreach ($this->paymentTransactions as $paymentTransaction) {
-            if ($paymentTransaction->isPaymentInProcess()) {
+            if ($paymentTransaction->hasPaymentInProcess()) {
                 return true;
             }
         }

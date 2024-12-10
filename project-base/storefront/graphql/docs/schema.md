@@ -5962,6 +5962,15 @@ The customer's first name
 </td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>hasPaymentInProcess</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td>
+
+Indicates whether order payment is still being processed with GoPay payment type
+
+</td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>heurekaAgreement</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
@@ -5985,15 +5994,6 @@ Indicates whether the billing address is other than a delivery address
 <td>
 
 Indicates whether the order is paid successfully with GoPay payment type
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>isPaymentInProcess</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a>!</td>
-<td>
-
-Indicates whether the order is payment processing with GoPay payment type
 
 </td>
 </tr>

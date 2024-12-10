@@ -34,7 +34,7 @@ export const OrderPaymentStatusBar: FC<OrderPaymentStatusBarProps> = ({
                     ) : orderIsPaymentInProcess ? (
                         <>
                             <InfoIconInCircle className="w-4 text-backgroundWarning" />
-                            {t('The Order is awaiting payment verification.')}
+                            {t('The order is awaiting payment verification.')}
                         </>
                     ) : (
                         <>

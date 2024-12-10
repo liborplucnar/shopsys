@@ -208,7 +208,7 @@ class PaymentTransaction
     /**
      * @return bool
      */
-    public function isPaymentInProcess(): bool
+    public function hasPaymentInProcess(): bool
     {
         if ($this->payment === null) {
             return false;
