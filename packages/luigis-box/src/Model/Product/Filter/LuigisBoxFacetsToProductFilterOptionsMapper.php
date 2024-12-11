@@ -6,6 +6,7 @@ namespace Shopsys\LuigisBoxBundle\Model\Product\Filter;
 
 use Shopsys\FrameworkBundle\Component\Domain\Domain;
 use Shopsys\FrameworkBundle\Component\Money\Money;
+use Shopsys\FrameworkBundle\Model\Product\Availability\ProductAvailabilityFacade;
 use Shopsys\FrameworkBundle\Model\Product\Filter\ParameterFilterChoice;
 use Shopsys\FrameworkBundle\Model\Product\Filter\PriceRange;
 use Shopsys\FrameworkBundle\Model\Product\Filter\ProductFilterConfigFactory;
@@ -40,6 +41,7 @@ class LuigisBoxFacetsToProductFilterOptionsMapper
      * @param \Shopsys\FrameworkBundle\Model\Product\Parameter\ParameterFacade $parameterFacade
      * @param \Shopsys\FrameworkBundle\Component\Domain\Domain $domain
      * @param \Shopsys\LuigisBoxBundle\Model\Product\Parameter\Value\ParameterValueRepository $parameterValueRepository
+     * @param \Shopsys\FrameworkBundle\Model\Product\Availability\ProductAvailabilityFacade $productAvailabilityFacade
      */
     public function __construct(
         protected readonly BrandRepository $brandRepository,
@@ -49,6 +51,7 @@ class LuigisBoxFacetsToProductFilterOptionsMapper
         protected readonly ParameterFacade $parameterFacade,
         protected readonly Domain $domain,
         protected readonly ParameterValueRepository $parameterValueRepository,
+        protected readonly ProductAvailabilityFacade $productAvailabilityFacade,
     ) {
     }
 
@@ -127,7 +130,7 @@ class LuigisBoxFacetsToProductFilterOptionsMapper
     protected function mapAvailability(array $facetData, ProductFilterCountData $productFilterCountData): void
     {
         if ($facetData['name'] === self::FACET_AVAILABILITY) {
-            $productFilterCountData->countInStock = $facetData['values'][0]['hits_count'] ?? 0;
+            $productFilterCountData->countInStock = $this->getCountInStock($facetData['values']);
         }
     }
 
@@ -322,5 +325,21 @@ class LuigisBoxFacetsToProductFilterOptionsMapper
         }
 
         return $valuesToCountsByName;
+    }
+
+    /**
+     * @param array<int, array{value: string, hits_count: int}> $facetValues
+     * @return int
+     */
+    protected function getCountInStock(array $facetValues): int
+    {
+        $onStockText = $this->productAvailabilityFacade->getOnStockText($this->domain->getLocale());
+        foreach ($facetValues as $facetValue) {
+            if ($facetValue['value'] === $onStockText) {
+                return $facetValue['hits_count'] ?? 0;
+            }
+        }
+
+        return 0;
     }
 }
