@@ -17,25 +17,25 @@ const OrderPaymentStatus: FC<{
 
     if (orderIsPaid) {
         return (
-            <>
+            <div className="flex items-center gap-2">
                 <InfoIconInCircle className="size-4 text-backgroundSuccessMore" />
                 {t('The order was paid')}
-            </>
+            </div>
         );
     }
 
     if (orderHasPaymentInProcess) {
-        <>
+        <div className="flex items-center gap-2">
             <InfoIconInCircle className="size-4 text-backgroundWarningMore" />
             {t('The order is awaiting payment verification.')}
-        </>;
+        </div>;
     }
 
     return (
-        <>
+        <div className="flex items-center gap-2">
             <InfoIconInCircle className="size-4 text-backgroundWarningMore" />
             {t('The order has not been paid')}
-        </>
+        </div>
     );
 };
 
