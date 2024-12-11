@@ -9,10 +9,10 @@ type OrderPaymentStatusBarProps = {
     orderHasPaymentInProcess: boolean;
 };
 
-const OrderPaymentStatusContent: FC = ({ children, className = 'text-backgroundWarningMore' }) => (
+const OrderPaymentStatusContent: FC<{ title: string; iconClassName?: string }> = ({ title, iconClassName }) => (
     <div className="flex items-center gap-2">
-        <InfoIconInCircle className={twMergeCustom('size-4', className)} />
-        {children}
+        <InfoIconInCircle className={twMergeCustom('size-4 text-backgroundWarningMore', iconClassName)} />
+        {title}
     </div>
 );
 
@@ -23,20 +23,14 @@ const OrderPaymentStatus: FC<{
     const { t } = useTranslation();
 
     if (orderIsPaid) {
-        return (
-            <OrderPaymentStatusContent className="text-backgroundSuccessMore">
-                {t('The order was paid')}
-            </OrderPaymentStatusContent>
-        );
+        return <OrderPaymentStatusContent iconClassName="text-backgroundSuccessMore" title={t('The order was paid')} />;
     }
 
     if (orderHasPaymentInProcess) {
-        return (
-            <OrderPaymentStatusContent>{t('The order is awaiting payment verification.')}</OrderPaymentStatusContent>
-        );
+        return <OrderPaymentStatusContent title={t('The order is awaiting payment verification.')} />;
     }
 
-    return <OrderPaymentStatusContent>{t('The order has not been paid')}</OrderPaymentStatusContent>;
+    return <OrderPaymentStatusContent title={t('The order has not been paid')} />;
 };
 
 export const OrderPaymentStatusBar: FC<OrderPaymentStatusBarProps> = ({
