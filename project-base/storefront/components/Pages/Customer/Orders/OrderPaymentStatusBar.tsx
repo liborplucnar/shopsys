@@ -9,6 +9,13 @@ type OrderPaymentStatusBarProps = {
     orderHasPaymentInProcess: boolean;
 };
 
+const OrderPaymentStatusContent: FC = ({ children, className = 'text-backgroundWarningMore' }) => (
+    <div className="flex items-center gap-2">
+        <InfoIconInCircle className={twMergeCustom('size-4', className)} />
+        {children}
+    </div>
+);
+
 const OrderPaymentStatus: FC<{
     orderIsPaid: boolean;
     orderHasPaymentInProcess: boolean;
@@ -17,26 +24,19 @@ const OrderPaymentStatus: FC<{
 
     if (orderIsPaid) {
         return (
-            <div className="flex items-center gap-2">
-                <InfoIconInCircle className="size-4 text-backgroundSuccessMore" />
+            <OrderPaymentStatusContent className="text-backgroundSuccessMore">
                 {t('The order was paid')}
-            </div>
+            </OrderPaymentStatusContent>
         );
     }
 
     if (orderHasPaymentInProcess) {
-        <div className="flex items-center gap-2">
-            <InfoIconInCircle className="size-4 text-backgroundWarningMore" />
-            {t('The order is awaiting payment verification.')}
-        </div>;
+        return (
+            <OrderPaymentStatusContent>{t('The order is awaiting payment verification.')}</OrderPaymentStatusContent>
+        );
     }
 
-    return (
-        <div className="flex items-center gap-2">
-            <InfoIconInCircle className="size-4 text-backgroundWarningMore" />
-            {t('The order has not been paid')}
-        </div>
-    );
+    return <OrderPaymentStatusContent>{t('The order has not been paid')}</OrderPaymentStatusContent>;
 };
 
 export const OrderPaymentStatusBar: FC<OrderPaymentStatusBarProps> = ({
@@ -45,19 +45,19 @@ export const OrderPaymentStatusBar: FC<OrderPaymentStatusBarProps> = ({
     className,
     orderHasPaymentInProcess,
 }) => {
+    if (orderPaymentType !== PaymentTypeEnum.GoPay) {
+        return null;
+    }
+
     return (
-        <>
-            {orderPaymentType === PaymentTypeEnum.GoPay && (
-                <div
-                    className={twMergeCustom(
-                        'flex gap-2 rounded-md p-2',
-                        orderIsPaid ? 'bg-backgroundSuccess text-textInverted' : 'bg-backgroundWarning',
-                        className,
-                    )}
-                >
-                    <OrderPaymentStatus orderHasPaymentInProcess={orderHasPaymentInProcess} orderIsPaid={orderIsPaid} />
-                </div>
+        <div
+            className={twMergeCustom(
+                'flex gap-2 rounded-md p-2',
+                orderIsPaid ? 'bg-backgroundSuccess text-textInverted' : 'bg-backgroundWarning',
+                className,
             )}
-        </>
+        >
+            <OrderPaymentStatus orderHasPaymentInProcess={orderHasPaymentInProcess} orderIsPaid={orderIsPaid} />
+        </div>
     );
 };
