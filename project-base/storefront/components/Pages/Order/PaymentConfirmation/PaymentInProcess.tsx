@@ -25,11 +25,10 @@ export const PaymentInProcess: FC<PaymentInProcessProps> = ({ orderUrlHash }) =>
         <ConfirmationPageContent
             content={t('You can check the status on the order detail page.')}
             heading={t('The payment is being processed')}
-            AdditionalContent={
-                <ExtendedNextLink href={orderDetailUrl} type="orderDetail">
-                    {t('Show order detail')}
-                </ExtendedNextLink>
-            }
-        />
+        >
+            <ExtendedNextLink href={orderDetailUrl} type="orderDetail">
+                {t('Show order detail')}
+            </ExtendedNextLink>
+        </ConfirmationPageContent>
     );
 };
