@@ -11,7 +11,7 @@ import { TypeCartFragment } from 'graphql/requests/cart/fragments/CartFragment.g
 import { useRemoveCartMutation } from 'graphql/requests/cart/mutations/RemoveCartMutation.generated';
 import { useTransportsWithPaymentsAndStoresForConvertimQuery } from 'graphql/requests/transports/queries/TransportsWithPaymentsAndStoresForConvertimQuery.generated';
 import useTranslation from 'next-translate/useTranslation';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { usePersistStore } from 'store/usePersistStore';
 import { useLogout } from 'utils/auth/useLogout';
 import { useFormatPrice } from 'utils/formatting/useFormatPrice';
@@ -22,7 +22,7 @@ export const Convertim: FC<ConvertimProps> = ({ cart, convertimProjectUuid }) =>
     const { t } = useTranslation();
     const formatPrice = useFormatPrice();
     const updateCartUuid = usePersistStore((store) => store.updateCartUuid);
-    const [, removeCartMutation] = useRemoveCartMutation();
+    const [{ fetching: isRemoveCartFetching }, removeCartMutation] = useRemoveCartMutation();
     const [{ data: transportsData, fetching: isTransportsFetching }] =
         useTransportsWithPaymentsAndStoresForConvertimQuery({
             variables: { cartUuid: cart?.uuid ?? null, displayInCartOnly: false },
@@ -53,12 +53,25 @@ export const Convertim: FC<ConvertimProps> = ({ cart, convertimProjectUuid }) =>
         [transportsData],
     );
 
-    const handleEventsAfterOrderCreation = () => {
+    const handleEventsAfterOrderCreation = async () => {
         if (cart?.uuid) {
-            removeCartMutation({ cartUuid: cart.uuid });
-            updateCartUuid(null);
+            // eslint-disable-next-line no-console
+            console.log('🚀 -> file: Convertim.tsx:56 -> handleEventsAfterOrderCreation -> cart?.uuid:', cart.uuid);
+            const { data: removeCartData, error } = await removeCartMutation({ cartUuid: cart.uuid });
+            if (error) {
+                // eslint-disable-next-line no-console
+                console.log('🚀 -> file: Convertim.tsx:60 -> handleEventsAfterOrderCreation -> error:', error);
+            }
+            if (removeCartData?.RemoveCart) {
+                updateCartUuid(null);
+            }
         }
     };
+
+    useEffect(() => {
+        // eslint-disable-next-line no-console
+        console.log('🚀 -> file: Convertim.tsx:70 -> useEffect -> isRemoveCartFetching', isRemoveCartFetching);
+    }, [isRemoveCartFetching]);
 
     if (isTransportsFetching) {
         return null;
@@ -75,8 +88,7 @@ export const Convertim: FC<ConvertimProps> = ({ cart, convertimProjectUuid }) =>
             isProduction={false}
             callbacks={{
                 afterSaveOrder: (orderObject: ConvertimOrderObject, continueFunction) => {
-                    handleEventsAfterOrderCreation();
-                    continueFunction();
+                    handleEventsAfterOrderCreation().then(() => continueFunction());
                 },
                 beforeOpenConvertim: (continueFunction) => {
                     continueFunction();
