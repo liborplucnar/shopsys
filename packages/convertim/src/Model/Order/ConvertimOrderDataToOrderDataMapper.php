@@ -124,11 +124,14 @@ class ConvertimOrderDataToOrderDataMapper
         $extraTransportData = $convertimOrderData->getTransportData()->getExtra();
 
         if ($extraTransportData !== null && $extraTransportData->getPickUpPointCode() !== null) {
+            $orderData->deliveryFirstName = $extraTransportData->getName();
+            $orderData->deliveryLastName = $extraTransportData->getLastName();
             $orderData->deliveryCompanyName = $extraTransportData->getPickupPointCompanyName();
             $orderData->deliveryStreet = $extraTransportData->getPickupPointStreet();
             $orderData->deliveryCity = $extraTransportData->getPickupPointCity();
             $orderData->deliveryPostcode = $extraTransportData->getPickupPointPostCode();
             $orderData->deliveryCountry = $this->getCountryByCode($extraTransportData->getPickupPointCountryCode());
+            $orderData->deliveryAddressSameAsBillingAddress = false;
         }
 
         $orderData->note = $convertimOrderData->getNote();
