@@ -54,13 +54,15 @@ export const Convertim: FC<ConvertimProps> = ({ cart, convertimProjectUuid }) =>
     );
 
     const handleEventsAfterOrderCreation = async () => {
+        // eslint-disable-next-line no-console
+        console.log('🚀 -> file: Convertim.tsx:57 -> handleEventsAfterOrderCreation -> cart?.uuid', cart?.uuid);
         if (cart?.uuid) {
             // eslint-disable-next-line no-console
-            console.log('🚀 -> file: Convertim.tsx:56 -> handleEventsAfterOrderCreation -> cart?.uuid:', cart.uuid);
+            console.log('🚀 -> file: Convertim.tsx:61 -> handleEventsAfterOrderCreation -> cart?.uuid:', cart.uuid);
             const { data: removeCartData, error } = await removeCartMutation({ cartUuid: cart.uuid });
             if (error) {
                 // eslint-disable-next-line no-console
-                console.log('🚀 -> file: Convertim.tsx:60 -> handleEventsAfterOrderCreation -> error:', error);
+                console.log('🚀 -> file: Convertim.tsx:65 -> handleEventsAfterOrderCreation -> error:', error);
             }
             if (removeCartData?.RemoveCart) {
                 updateCartUuid(null);
@@ -88,6 +90,8 @@ export const Convertim: FC<ConvertimProps> = ({ cart, convertimProjectUuid }) =>
             isProduction={false}
             callbacks={{
                 afterSaveOrder: (orderObject: ConvertimOrderObject, continueFunction) => {
+                    // eslint-disable-next-line no-console
+                    console.log('🚀 -> file: Convertim.tsx:94 -> orderObject', orderObject);
                     handleEventsAfterOrderCreation().then(() => continueFunction());
                 },
                 beforeOpenConvertim: (continueFunction) => {
