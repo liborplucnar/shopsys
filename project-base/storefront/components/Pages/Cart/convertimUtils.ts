@@ -56,11 +56,11 @@ const mapTransportType = (type: TypeTransportTypeEnum): TransportTypes | null =>
         case TypeTransportTypeEnum.ConvertimBalikovna:
             return TransportTypes.PICKUP_PLACE;
         case TypeTransportTypeEnum.ConvertimPpl:
-            return TransportTypes.CUSTOM_ZIP;
+            return TransportTypes.PICKUP_PLACE;
         case TypeTransportTypeEnum.ConvertimDpdCzechia:
-            return TransportTypes.CUSTOM_ZIP;
+            return TransportTypes.PICKUP_PLACE;
         case TypeTransportTypeEnum.ConvertimDpdSlovakia:
-            return TransportTypes.CUSTOM_ZIP;
+            return TransportTypes.PICKUP_PLACE;
         default:
             return null;
     }
