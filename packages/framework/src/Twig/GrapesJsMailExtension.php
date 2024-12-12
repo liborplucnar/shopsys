@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Twig;
+namespace Shopsys\FrameworkBundle\Twig;
 
-use App\Model\Mail\MailTemplateBuilder;
 use Shopsys\FrameworkBundle\Component\Domain\AdminDomainTabsFacade;
+use Shopsys\FrameworkBundle\Model\Mail\MailTemplateBuilder;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class GrapesJsMailExtension extends AbstractExtension
 {
     /**
-     * @param \App\Model\Mail\MailTemplateBuilder $mailTemplateBuilder
+     * @param \Shopsys\FrameworkBundle\Model\Mail\MailTemplateBuilder $mailTemplateBuilder
      * @param \Shopsys\FrameworkBundle\Component\Domain\AdminDomainTabsFacade $adminDomainTabsFacade
      */
     public function __construct(
-        private readonly MailTemplateBuilder $mailTemplateBuilder,
-        private readonly AdminDomainTabsFacade $adminDomainTabsFacade,
+        protected readonly MailTemplateBuilder $mailTemplateBuilder,
+        protected readonly AdminDomainTabsFacade $adminDomainTabsFacade,
     ) {
     }
 
