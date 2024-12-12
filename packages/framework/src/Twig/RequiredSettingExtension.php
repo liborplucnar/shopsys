@@ -1,0 +1,235 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Shopsys\FrameworkBundle\Twig;
+
+use Override;
+use Shopsys\FrameworkBundle\Component\Domain\Domain;
+use Shopsys\FrameworkBundle\Component\Setting\Setting;
+use Shopsys\FrameworkBundle\Model\Country\CountryFacade;
+use Shopsys\FrameworkBundle\Model\Mail\MailTemplateFacade;
+use Shopsys\FrameworkBundle\Model\Product\Parameter\ParameterFacade;
+use Shopsys\FrameworkBundle\Model\Product\Unit\Exception\UnitNotFoundException;
+use Shopsys\FrameworkBundle\Model\Product\Unit\UnitFacade;
+use Shopsys\FrameworkBundle\Model\Stock\StockFacade;
+use Symfony\Component\Routing\RouterInterface;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+class RequiredSettingExtension extends AbstractExtension
+{
+    /**
+     * @param \Twig\Environment $twig
+     * @param \Symfony\Component\Routing\RouterInterface $router
+     * @param \Shopsys\FrameworkBundle\Component\Domain\Domain $domain
+     * @param \Shopsys\FrameworkBundle\Component\Setting\Setting $setting
+     * @param \Shopsys\FrameworkBundle\Model\Mail\MailTemplateFacade $mailTemplateFacade
+     * @param \Shopsys\FrameworkBundle\Model\Product\Parameter\ParameterFacade $parameterFacade
+     * @param \Shopsys\FrameworkBundle\Model\Product\Unit\UnitFacade $unitFacade
+     * @param \Shopsys\FrameworkBundle\Model\Stock\StockFacade $stockFacade
+     * @param \Shopsys\FrameworkBundle\Model\Country\CountryFacade $countryFacade
+     */
+    public function __construct(
+        protected readonly Environment $twig,
+        protected readonly RouterInterface $router,
+        protected readonly Domain $domain,
+        protected readonly Setting $setting,
+        protected readonly MailTemplateFacade $mailTemplateFacade,
+        protected readonly ParameterFacade $parameterFacade,
+        protected readonly UnitFacade $unitFacade,
+        protected readonly StockFacade $stockFacade,
+        protected readonly CountryFacade $countryFacade,
+    ) {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    #[Override]
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('render_required_settings', $this->renderRequiredSettings(...), ['is_safe' => ['html']]),
+        ];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function renderRequiredSettings(): ?string
+    {
+        $requiredSettingsMessages = [];
+
+        $this->checkEnabledMailTemplatesHaveTheirBodyAndSubjectFilled($requiredSettingsMessages);
+        $this->checkAtLeastOneUnitExists($requiredSettingsMessages);
+        $this->checkDefaultUnitIsSet($requiredSettingsMessages);
+        $this->checkAtLeastOneWarehouseExists($requiredSettingsMessages);
+        $this->checkAtLeastOneCountryExists($requiredSettingsMessages);
+        $this->checkMandatoryArticlesExist($requiredSettingsMessages);
+        $this->checkAllSliderNumericValuesAreSet($requiredSettingsMessages);
+
+        if (count($requiredSettingsMessages) === 0) {
+            return null;
+        }
+
+        return $this->twig->render(
+            '@ShopsysFramework/Components/RequiredSettings/requiredSettings.html.twig',
+            [
+                'requiredSettingsMessages' => $requiredSettingsMessages,
+            ],
+        );
+    }
+
+    /**
+     * @param string[] $warnings
+     */
+    protected function checkEnabledMailTemplatesHaveTheirBodyAndSubjectFilled(array &$warnings): void
+    {
+        if ($this->mailTemplateFacade->existsTemplateWithEnabledSendingHavingEmptyBodyOrSubject()) {
+            $warnings[] = t(
+                '<a href="%url%">Some required email templates are not fully set.</a>',
+                [
+                    '%url%' => $this->router->generate('admin_mail_template'),
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param string[] $warnings
+     */
+    protected function checkAtLeastOneUnitExists(array &$warnings): void
+    {
+        if ($this->unitFacade->getCount() === 0) {
+            $warnings[] = t(
+                '<a href="%url%">There are no units, you need to create some.</a>',
+                [
+                    '%url%' => $this->router->generate('admin_unit_list'),
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param string[] $warnings
+     */
+    protected function checkDefaultUnitIsSet(array &$warnings): void
+    {
+        try {
+            $this->unitFacade->getDefaultUnit();
+        } catch (UnitNotFoundException) {
+            $warnings[] = t(
+                '<a href="%url%">Default unit is not set.</a>',
+                [
+                    '%url%' => $this->router->generate('admin_unit_list'),
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param string[] $warnings
+     */
+    protected function checkAtLeastOneWarehouseExists(array &$warnings): void
+    {
+        if ($this->stockFacade->getCount() === 0) {
+            $warnings[] = t(
+                '<a href="%url%">There are no warehouses, you need to create some.</a>',
+                [
+                    '%url%' => $this->router->generate('admin_stock_list'),
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param string[] $warnings
+     */
+    protected function checkAtLeastOneCountryExists(array &$warnings): void
+    {
+        if ($this->countryFacade->getCount() === 0) {
+            $warnings[] = t(
+                '<a href="%url%">There are no countries, you need to create some.</a>',
+                [
+                    '%url%' => $this->router->generate('admin_country_list'),
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param string[] $warnings
+     */
+    protected function checkMandatoryArticlesExist(array &$warnings): void
+    {
+        foreach ($this->domain->getAdminEnabledDomainIds() as $domainId) {
+            $domainConfig = $this->domain->getDomainConfigById($domainId);
+
+            if ($this->setting->getForDomain(Setting::TERMS_AND_CONDITIONS_ARTICLE_ID, $domainConfig->getId()) === null) {
+                $warnings[] = t(
+                    '<a href="%url%">Term and conditions article for domain %domainName% is not set.</a>',
+                    [
+                        '%url%' => $this->router->generate('admin_legalconditions_termsandconditions'),
+                        '%domainName%' => $domainConfig->getName(),
+                    ],
+                );
+            }
+
+            if ($this->setting->getForDomain(Setting::PRIVACY_POLICY_ARTICLE_ID, $domainConfig->getId()) === null) {
+                $warnings[] = t(
+                    '<a href="%url%">Privacy policy article for domain %domainName% is not set.</a>',
+                    [
+                        '%url%' => $this->router->generate('admin_legalconditions_privacypolicy'),
+                        '%domainName%' => $domainConfig->getName(),
+                    ],
+                );
+            }
+
+            if ($this->setting->getForDomain(Setting::USER_CONSENT_POLICY_ARTICLE_ID, $domainConfig->getId()) === null) {
+                $warnings[] = t(
+                    '<a href="%url%">User consent policy article for domain %domainName% is not set.</a>',
+                    [
+                        '%url%' => $this->router->generate('admin_userconsentpolicy_setting'),
+                        '%domainName%' => $domainConfig->getName(),
+                    ],
+                );
+            }
+        }
+    }
+
+    /**
+     * @param string[] $warnings
+     */
+    protected function checkAllSliderNumericValuesAreSet(array &$warnings): void
+    {
+        $countOfSliderParametersWithoutNumericValueSet = $this->parameterFacade->getCountOfSliderParametersWithoutTheirsNumericValueFilled();
+
+        if ($countOfSliderParametersWithoutNumericValueSet <= 0) {
+            return;
+        }
+
+        $warning = t(
+            '{1} There is one parameter slider that does not have its numeric values filled in.|[2,Inf] There are %count% parameter sliders that does not have its numeric values filled in.',
+            [
+                '%count%' => $countOfSliderParametersWithoutNumericValueSet,
+            ],
+        );
+
+        $sliderParametersWithoutTheirsNumericValueFilled = $this->parameterFacade->getSliderParametersWithoutTheirsNumericValueFilled();
+
+        $warning .= '<ul>';
+
+        foreach ($sliderParametersWithoutTheirsNumericValueFilled as $parameter) {
+            $warning .= sprintf(
+                '<li><a href="%s">%s</a></li>',
+                $this->router->generate('admin_parametervalues_edit', ['id' => $parameter->getId()]),
+                $parameter->getName(),
+            );
+        }
+        $warning .= '</ul>';
+
+        $warnings[] = $warning;
+    }
+}
