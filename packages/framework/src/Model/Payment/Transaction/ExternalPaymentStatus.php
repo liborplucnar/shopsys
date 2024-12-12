@@ -2,31 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Shopsys\FrameworkBundle\Model\GoPay;
+namespace Shopsys\FrameworkBundle\Model\Payment\Transaction;
 
 use GoPay\Definition\Response\PaymentStatus;
 
-class GoPayOrderStatus
+class ExternalPaymentStatus
 {
     /**
-     * @param string $goPayStatus
+     * @param string $externalStatus
      * @return string
      */
-    public static function getTranslatedGoPayStatus(string $goPayStatus): string
+    public static function getTranslatedStatus(string $externalStatus): string
     {
-        $goPayStatusToTranslate = self::getGoPayStatusesToTranslate();
+        $statusesToTranslate = self::getStatusesToTranslate();
 
-        if (array_key_exists($goPayStatus, $goPayStatusToTranslate)) {
-            return $goPayStatusToTranslate[$goPayStatus];
+        if (array_key_exists(mb_strtoupper($externalStatus), $statusesToTranslate)) {
+            return $statusesToTranslate[$externalStatus];
         }
 
-        return $goPayStatus;
+        return $externalStatus;
     }
 
     /**
      * @return array<string, string>
      */
-    protected static function getGoPayStatusesToTranslate(): array
+    protected static function getStatusesToTranslate(): array
     {
         return [
             PaymentStatus::CREATED => t('Payment created'),
