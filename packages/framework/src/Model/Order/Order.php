@@ -454,7 +454,7 @@ class Order
      */
     public function hasExternalPayment(): bool
     {
-        return $this->getPayment()->getType() !== PaymentTypeEnum::TYPE_BASIC;
+        return $this->getPayment()->getType() !== PaymentTypeEnum::TYPE_BASIC && count($this->getTransactionsOfCurrentPayment()) > 0;
     }
 
     /**
