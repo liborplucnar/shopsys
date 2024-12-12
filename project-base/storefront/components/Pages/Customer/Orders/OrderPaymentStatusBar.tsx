@@ -1,18 +1,21 @@
 import { InfoIconInCircle } from 'components/Basic/Icon/InfoIconInCircle';
-import { TypePaymentTypeEnum } from 'graphql/types';
 import useTranslation from 'next-translate/useTranslation';
 import { twMergeCustom } from 'utils/twMerge';
 
 type OrderPaymentStatusBarProps = {
-    orderPaymentType: TypePaymentTypeEnum;
+    orderHasExternalPayment: boolean;
     orderIsPaid: boolean;
 };
 
-export const OrderPaymentStatusBar: FC<OrderPaymentStatusBarProps> = ({ orderPaymentType, orderIsPaid, className }) => {
+export const OrderPaymentStatusBar: FC<OrderPaymentStatusBarProps> = ({
+    orderHasExternalPayment,
+    orderIsPaid,
+    className,
+}) => {
     const { t } = useTranslation();
     return (
         <>
-            {orderPaymentType === TypePaymentTypeEnum.GoPay && (
+            {orderHasExternalPayment && (
                 <div
                     className={twMergeCustom(
                         'flex gap-2 rounded-md p-2',
