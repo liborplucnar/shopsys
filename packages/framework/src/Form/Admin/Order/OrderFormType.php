@@ -203,7 +203,7 @@ class OrderFormType extends AbstractType
         if ($order->hasExternalPayment()) {
             $paymentTransactions = $order->getTransactionsOfCurrentPayment();
             /** @var \Shopsys\FrameworkBundle\Model\Payment\Transaction\PaymentTransaction|bool $paymentTransaction */
-            $paymentTransaction = end($paymentTransactions)->getExternalPaymentStatus();
+            $paymentTransaction = end($paymentTransactions);
 
             if ($paymentTransaction !== false) {
                 if ($paymentTransaction->getExternalPaymentStatus() !== null) {
