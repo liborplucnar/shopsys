@@ -1684,6 +1684,8 @@ export type TypeOrder = {
   email: Scalars['String']['output'];
   /** The customer's first name */
   firstName: Maybe<Scalars['String']['output']>;
+  /** Indicates whether the order is paid with an external payment method */
+  hasExternalPayment: Scalars['Boolean']['output'];
   /** Determines whether the customer agrees with sending satisfaction questionnaires within the Verified by Customers Heureka program */
   heurekaAgreement: Scalars['Boolean']['output'];
   /** Indicates whether the billing address is other than a delivery address */
@@ -2067,7 +2069,7 @@ export type TypePayment = {
   /** Payment images */
   images: Array<TypeImage>;
   /** Localized payment instruction (domain dependent) */
-  instruction: Maybe<Scalars['String']['output']>;
+  instructions: Maybe<Scalars['String']['output']>;
   /** Payment image by params */
   mainImage: Maybe<TypeImage>;
   /** Payment name */
@@ -3302,7 +3304,7 @@ export type TypeTransport = {
   /** Transport images */
   images: Array<TypeImage>;
   /** Localized transport instruction (domain dependent) */
-  instruction: Maybe<Scalars['String']['output']>;
+  instructions: Maybe<Scalars['String']['output']>;
   /** Pointer telling if the transport is of type personal pickup */
   isPersonalPickup: Scalars['Boolean']['output'];
   /** Transport image by params */

@@ -1290,6 +1290,8 @@ type Order {
   email: String!
   "The customer's first name"
   firstName: String
+  "Indicates whether the order is paid with an external payment method"
+  hasExternalPayment: Boolean!
   "Determines whether the customer agrees with sending satisfaction questionnaires within the Verified by Customers Heureka program"
   heurekaAgreement: Boolean!
   "Indicates whether the billing address is other than a delivery address"
@@ -1661,7 +1663,7 @@ type Payment {
   "Payment images"
   images(type: String = null): [Image!]!
   "Localized payment instruction (domain dependent)"
-  instruction: String
+  instructions: String
   "Payment image by params"
   mainImage(type: String = null): Image
   "Payment name"
@@ -2538,7 +2540,7 @@ type Transport {
   "Transport images"
   images(type: String = null): [Image!]!
   "Localized transport instruction (domain dependent)"
-  instruction: String
+  instructions: String
   "Pointer telling if the transport is of type personal pickup"
   isPersonalPickup: Boolean!
   "Transport image by params"
