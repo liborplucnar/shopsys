@@ -26,7 +26,7 @@
     - see `src/Model/Security/MenuItemsGrantedRolesSetting.php`
     - we use the default [access decision strategy (i.e. `affirmative`)](https://symfony.com/doc/5.4/security/voters.html#changing-the-access-decision-strategy), i.e., an admin will be granted access if he has at least one of the required roles, see the example below:
     ```php
-    // returns true if the admin has at least one of the roles ROLE_FEED_VIEW, ROLE_HEUREKA_VIEW, or ROLE_SCRIPT_VIEW
+    // returns true if the admin has at least one  of the roles ROLE_FEED_VIEW, ROLE_HEUREKA_VIEW, or ROLE_SCRIPT_VIEW
     $this->security->isGranted([
         Roles::ROLE_FEED_VIEW,
         Roles::ROLE_HEUREKA_VIEW,
