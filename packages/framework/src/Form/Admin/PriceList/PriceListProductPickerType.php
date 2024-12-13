@@ -21,7 +21,7 @@ final class PriceListProductPickerType extends AbstractType
      * @param \Shopsys\FrameworkBundle\Form\Transformers\ProductIdToProductTransformer $productsIdToProductsTransformer
      */
     public function __construct(
-        protected readonly ProductIdToProductTransformer $productsIdToProductsTransformer,
+        private readonly ProductIdToProductTransformer $productsIdToProductsTransformer,
     ) {
     }
 
