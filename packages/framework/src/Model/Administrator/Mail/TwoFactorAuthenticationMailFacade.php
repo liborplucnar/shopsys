@@ -32,7 +32,7 @@ class TwoFactorAuthenticationMailFacade implements AuthCodeMailerInterface
      */
     public function sendAuthCode(TwoFactorInterface $administrator): void
     {
-        $mailTemplate = $this->mailTemplateFacade->get(
+        $mailTemplate = $this->mailTemplateFacade->getWrappedWithGrapesBody(
             TwoFactorAuthenticationMail::TWO_FACTOR_AUTHENTICATION_CODE,
             $this->domain->getId(),
         );
