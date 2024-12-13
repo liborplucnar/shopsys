@@ -20,10 +20,11 @@ class RedisClientFacade
     /**
      * @param string $key
      * @param mixed $data
+     * @param mixed $options
      */
-    public function save(string $key, mixed $data): void
+    public function save(string $key, mixed $data, mixed $options = null): void
     {
-        $this->redisClient->set($key, $data);
+        $this->redisClient->set($key, $data, $options);
     }
 
     /**
@@ -51,5 +52,14 @@ class RedisClientFacade
     public function delete(string $key): void
     {
         $this->redisClient->del($key);
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function get(string $key): mixed
+    {
+        return $this->redisClient->get($key);
     }
 }

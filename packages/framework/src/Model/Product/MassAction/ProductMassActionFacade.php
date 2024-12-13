@@ -50,7 +50,7 @@ class ProductMassActionFacade
             $selectedProductIds,
             $productMassActionData->value === ProductMassActionData::VALUE_PRODUCT_HIDE,
         );
-        $this->productRecalculationDispatcher->dispatchProductIds($selectedProductIds, ProductRecalculationPriorityEnum::REGULAR, [ProductExportScopeConfig::SCOPE_HIDDEN]);
+        $this->productRecalculationDispatcher->dispatchProductIdsByBatches($selectedProductIds, ProductRecalculationPriorityEnum::REGULAR, [ProductExportScopeConfig::SCOPE_HIDDEN]);
     }
 
     /**

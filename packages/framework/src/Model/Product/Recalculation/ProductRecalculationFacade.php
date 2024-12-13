@@ -29,6 +29,7 @@ class ProductRecalculationFacade
      * @param \Shopsys\FrameworkBundle\Model\Product\ProductSellingDeniedRecalculator $productSellingDeniedRecalculator
      * @param \Shopsys\FrameworkBundle\Model\Product\Elasticsearch\Scope\ProductExportScopeConfigFacade $productExportScopeConfigFacade
      * @param \Shopsys\FrameworkBundle\Model\Product\ProductElasticsearchProvider $productElasticsearchProvider
+     * @param \Shopsys\FrameworkBundle\Model\Product\Recalculation\ProductRecalculationCacheFacade $productRecalculationCacheFacade
      */
     public function __construct(
         protected readonly IndexFacade $indexFacade,
@@ -40,6 +41,7 @@ class ProductRecalculationFacade
         protected readonly ProductSellingDeniedRecalculator $productSellingDeniedRecalculator,
         protected readonly ProductExportScopeConfigFacade $productExportScopeConfigFacade,
         protected readonly ProductElasticsearchProvider $productElasticsearchProvider,
+        protected readonly ProductRecalculationCacheFacade $productRecalculationCacheFacade,
     ) {
     }
 
@@ -48,9 +50,12 @@ class ProductRecalculationFacade
      */
     public function recalculate(array $exportScopesIndexedByProductId): void
     {
+        $exportScopesIndexedByProductId = $this->productRecalculationCacheFacade->getScopesIndexedByProductId($exportScopesIndexedByProductId);
+
         foreach ($this->groupProductIdsWithSameScopes($exportScopesIndexedByProductId) as $productIdsWithScopes) {
-            $idsToRecalculate = $this->productRecalculationRepository->getIdsToRecalculate($productIdsWithScopes[self::KEY_PRODUCT_IDS]);
-            $this->recalculateWithScope($idsToRecalculate, $productIdsWithScopes[self::KEY_SCOPES]);
+            $this->recalculateWithScope($productIdsWithScopes[self::KEY_PRODUCT_IDS], $productIdsWithScopes[self::KEY_SCOPES]);
+
+            $this->productRecalculationCacheFacade->delete($productIdsWithScopes[self::KEY_PRODUCT_IDS]);
         }
     }
 

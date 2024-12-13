@@ -39,7 +39,7 @@ class DispatchAffectedProductsSubscriber implements EventSubscriberInterface
     {
         $productIds = $this->affectedProductsFacade->getProductIdsWithBrand($brandEvent->getBrand());
 
-        $this->productRecalculationDispatcher->dispatchProductIds(
+        $this->productRecalculationDispatcher->dispatchProductIdsByBatches(
             $productIds,
             ProductRecalculationPriorityEnum::REGULAR,
             [ProductExportScopeConfig::SCOPE_BRAND],
@@ -53,7 +53,7 @@ class DispatchAffectedProductsSubscriber implements EventSubscriberInterface
     {
         $productIds = $this->affectedProductsFacade->getProductIdsWithCategory($categoryEvent->getCategory());
 
-        $this->productRecalculationDispatcher->dispatchProductIds(
+        $this->productRecalculationDispatcher->dispatchProductIdsByBatches(
             $productIds,
             ProductRecalculationPriorityEnum::REGULAR,
             [ProductExportScopeConfig::SCOPE_CATEGORIES],
@@ -67,7 +67,7 @@ class DispatchAffectedProductsSubscriber implements EventSubscriberInterface
     {
         $productIds = $this->affectedProductsFacade->getProductIdsWithFlag($flagEvent->getFlag());
 
-        $this->productRecalculationDispatcher->dispatchProductIds(
+        $this->productRecalculationDispatcher->dispatchProductIdsByBatches(
             $productIds,
             ProductRecalculationPriorityEnum::REGULAR,
             [ProductExportScopeConfig::SCOPE_FLAGS],
@@ -81,7 +81,7 @@ class DispatchAffectedProductsSubscriber implements EventSubscriberInterface
     {
         $productIds = $this->affectedProductsFacade->getProductIdsWithParameter($parameterEvent->getParameter());
 
-        $this->productRecalculationDispatcher->dispatchProductIds(
+        $this->productRecalculationDispatcher->dispatchProductIdsByBatches(
             $productIds,
             ProductRecalculationPriorityEnum::REGULAR,
             [ProductExportScopeConfig::SCOPE_PARAMETERS],
@@ -95,7 +95,7 @@ class DispatchAffectedProductsSubscriber implements EventSubscriberInterface
     {
         $productIds = $this->affectedProductsFacade->getProductIdsWithParameterGroup($parameterGroupEvent->getParameterGroup());
 
-        $this->productRecalculationDispatcher->dispatchProductIds(
+        $this->productRecalculationDispatcher->dispatchProductIdsByBatches(
             $productIds,
             ProductRecalculationPriorityEnum::REGULAR,
             [ProductExportScopeConfig::SCOPE_PARAMETERS],
@@ -119,7 +119,7 @@ class DispatchAffectedProductsSubscriber implements EventSubscriberInterface
     {
         $productIds = $this->affectedProductsFacade->getProductIdsWithUnit($unitEvent->getUnit());
 
-        $this->productRecalculationDispatcher->dispatchProductIds(
+        $this->productRecalculationDispatcher->dispatchProductIdsByBatches(
             $productIds,
             ProductRecalculationPriorityEnum::REGULAR,
             [ProductExportScopeConfig::SCOPE_UNIT],
