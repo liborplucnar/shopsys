@@ -361,7 +361,51 @@ Shopsys\FrameworkBundle\Model\Mail\MailTemplateConfiguration:
               - '@=service("App\\Component\\Mail\\PasswordChangedMailTemplateVariablesProvider").create()'
 ```
 
+## Bonus: Enable testing the email template in administration on click
+
+This step is not necessary for the email template to work, but with a little effort, it could add a great value for the developers, testers, and the e-shop administrators.
+By adding a new implementation of `Shopsys\FrameworkBundle\Model\Mail\MailTemplateSender\MailTemplateSenderInterface`, it will be possible to send the email template to any desired email without the need of performing the action that normally triggers the mail sending.
+
+```php
+class CustomerPasswordChangeMailTemplateSender implements MailTemplateSenderInterface
+{
+    public function __construct(
+        private readonly PasswordChangedMail $passwordChangedMail,
+        private readonly UploadedFileFacade $uploadedFileFacade,
+        private readonly Mailer $mailer,
+        private readonly CustomerUserFacade $customerUserFacade,
+    ) {
+    }
+
+    public function getFormLabelForEntityIdentifier(): ?string
+    {
+        return t('Customer ID');
+    }
+
+    public function supports(MailTemplate $mailTemplate): bool
+    {
+        return $mailTemplate->getName() === PasswordChangedMail::MAIL_TEMPLATE_NAME;
+    }
+
+    public function sendTemplate(MailTemplate $mailTemplate, string $mailTo, ?int $entityId): void
+    {
+        $customerUser = $this->customerUserFacade->getById($entityId);
+        $messageData = $this->passwordChangedMail->createMessage($mailTemplate, $customerUser);
+        $messageData->attachments = $this->uploadedFileFacade->getUploadedFilesByEntity($mailTemplate);
+        $messageData->toEmail = $mailTo;
+        $this->mailer->send($messageData);
+    }
+}
+```
+
+When the implementation is ready, "Send test mail" button will appear on the mail template detail page in the administration.
+The administrator then can choose the email address to which the email should be sent and enter a customer user ID that will be used to fill in the mail variables from.
+
+You might notice that the email sending here is duplicated with the code we added to `CustomerPasswordController::setNewPasswordAction()`.
+This is for the sake of simplicity and readability of this cookbook. In a real-world scenario, you should refactor the code to avoid duplication.
+You can find inspiration in the existing implementations of `Shopsys\FrameworkBundle\Model\Mail\MailTemplateSender\MailTemplateSenderInterface`.
+
 ## Conclusion
 
 Now, in your database is a new email template, and an email from this template is sent to the user whenever he resets his password.
-This template can be easily changed from the administration.
+This template can be easily changed from the administration. For testing purposes, it is also possible to send the template on click from administration to any email address.
