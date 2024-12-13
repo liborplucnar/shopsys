@@ -79,9 +79,6 @@ export default class ProductsWithPricePicker {
         $item.find('.js-products-with-price-picker-item-button-delete').click(() => {
             _this.removeItem($item);
         });
-        $item.find('.js-remove-form-table-line').click(() => {
-            $item.remove();
-        });
     }
 
     removeItem ($item) {
