@@ -572,7 +572,7 @@
             </span>
         </td>
         <td class="table-form__cell table-form__cell--actions">
-            {%- if disabled == false %}
+            {%- if disabled is same as false %}
                 <span class="cursor-pointer js-products-picker-item-button-delete">
                     <span class="svg svg-delete-thin in-icon"></span>
                     {{ form_widget(form, {attr: {class: 'js-products-picker-item-input'}}) }}
