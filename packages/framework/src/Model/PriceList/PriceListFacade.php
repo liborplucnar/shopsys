@@ -82,7 +82,7 @@ class PriceListFacade
     /**
      * @param \Shopsys\FrameworkBundle\Model\PriceList\PriceList $priceList
      * @param \Shopsys\FrameworkBundle\Model\PriceList\PriceListData $priceListData
-     * @param array $originalProductIds
+     * @param int[] $originalProductIds
      */
     protected function refreshProductWithPrices(
         PriceList $priceList,
