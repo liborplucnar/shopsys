@@ -50,7 +50,6 @@ class PriceListRepository
     {
         return $this->getPriceListRepository()
             ->createQueryBuilder('pl')
-            ->addSelect('pl.name')
             ->addSelect('CASE
                     WHEN :now BETWEEN pl.validFrom AND pl.validTo THEN 0
                     WHEN :now < pl.validFrom THEN 1
