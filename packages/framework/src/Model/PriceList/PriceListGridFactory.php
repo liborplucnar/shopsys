@@ -43,7 +43,7 @@ class PriceListGridFactory
         $grid->enablePaging();
         $grid->setDefaultOrder('lastUpdate', DataSourceInterface::ORDER_DESC);
 
-        $grid->addColumn('name', 'name', t('Price list name'), true);
+        $grid->addColumn('name', 'pl.name', t('Price list name'), true);
 
         if ($this->domain->isMultidomain()) {
             $grid->addColumn('domain_id', 'pl.domainId', t('Domain'), true);
