@@ -15,9 +15,11 @@ class ProductFilterToLuigisBoxFilterMapper
 
     /**
      * @param \Shopsys\FrameworkBundle\Model\Product\Availability\ProductAvailabilityFacade $productAvailabilityFacade
+     * @param \Shopsys\FrameworkBundle\Component\Domain\Domain $domain
      */
     public function __construct(
         protected readonly ProductAvailabilityFacade $productAvailabilityFacade,
+        protected readonly Domain $domain,
     ) {
     }
 
@@ -102,7 +104,7 @@ class ProductFilterToLuigisBoxFilterMapper
         array $luigisBoxFilter,
     ): array {
         if ($productFilterData->inStock === true) {
-            $luigisBoxFilter[self::FILTER_OR][] = 'availability_rank:1';
+            $luigisBoxFilter[self::FILTER_OR][] = 'availability_rank_text:' . $this->productAvailabilityFacade->getOnStockText($this->domain->getLocale());
         }
 
         return $luigisBoxFilter;
