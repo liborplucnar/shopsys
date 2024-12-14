@@ -57,7 +57,7 @@ final class ProductPriceQueryTest extends TransactionFunctionalTestCase
         $this->assertMoney('115.67', $priceInfo->priceWithoutVat);
         $this->assertMoney('139.96', $priceInfo->priceWithVat);
         $this->assertMoney('24.29', $priceInfo->vatAmount);
-        $this->assertFalse($priceInfo->priceFrom);
+        $this->assertFalse($priceInfo->isPriceFrom);
         $this->assertMoney('115.67', $priceInfo->basicPrice->getPriceWithoutVat());
         $this->assertMoney('139.96', $priceInfo->basicPrice->getPriceWithVat());
         $this->assertMoney('24.29', $priceInfo->basicPrice->getVatAmount());
@@ -101,7 +101,7 @@ final class ProductPriceQueryTest extends TransactionFunctionalTestCase
         $this->assertMoney('99.17', $priceInfo->priceWithoutVat);
         $this->assertMoney('120', $priceInfo->priceWithVat);
         $this->assertMoney('20.83', $priceInfo->vatAmount);
-        $this->assertFalse($priceInfo->priceFrom);
+        $this->assertFalse($priceInfo->isPriceFrom);
         $this->assertMoney('115.67', $priceInfo->basicPrice->getPriceWithoutVat());
         $this->assertMoney('139.96', $priceInfo->basicPrice->getPriceWithVat());
         $this->assertMoney('24.29', $priceInfo->basicPrice->getVatAmount());
@@ -159,7 +159,7 @@ final class ProductPriceQueryTest extends TransactionFunctionalTestCase
         $this->assertMoney('99.17', $priceInfo->priceWithoutVat);
         $this->assertMoney('120', $priceInfo->priceWithVat);
         $this->assertMoney('20.83', $priceInfo->vatAmount);
-        $this->assertFalse($priceInfo->priceFrom);
+        $this->assertFalse($priceInfo->isPriceFrom);
         $this->assertMoney('115.67', $priceInfo->basicPrice->getPriceWithoutVat());
         $this->assertMoney('139.96', $priceInfo->basicPrice->getPriceWithVat());
         $this->assertMoney('24.29', $priceInfo->basicPrice->getVatAmount());
@@ -217,7 +217,7 @@ final class ProductPriceQueryTest extends TransactionFunctionalTestCase
         $this->assertMoney('99.17', $priceInfo->priceWithoutVat);
         $this->assertMoney('120', $priceInfo->priceWithVat);
         $this->assertMoney('20.83', $priceInfo->vatAmount);
-        $this->assertFalse($priceInfo->priceFrom);
+        $this->assertFalse($priceInfo->isPriceFrom);
         $this->assertMoney('115.67', $priceInfo->basicPrice->getPriceWithoutVat());
         $this->assertMoney('139.96', $priceInfo->basicPrice->getPriceWithVat());
         $this->assertMoney('24.29', $priceInfo->basicPrice->getVatAmount());
@@ -261,7 +261,7 @@ final class ProductPriceQueryTest extends TransactionFunctionalTestCase
         $this->assertMoney('115.67', $priceInfo->priceWithoutVat);
         $this->assertMoney('139.96', $priceInfo->priceWithVat);
         $this->assertMoney('24.29', $priceInfo->vatAmount);
-        $this->assertFalse($priceInfo->priceFrom);
+        $this->assertFalse($priceInfo->isPriceFrom);
         $this->assertMoney('115.67', $priceInfo->basicPrice->getPriceWithoutVat());
         $this->assertMoney('139.96', $priceInfo->basicPrice->getPriceWithVat());
         $this->assertMoney('24.29', $priceInfo->basicPrice->getVatAmount());
@@ -305,7 +305,7 @@ final class ProductPriceQueryTest extends TransactionFunctionalTestCase
         $this->assertMoney('115.67', $priceInfo->priceWithoutVat);
         $this->assertMoney('139.96', $priceInfo->priceWithVat);
         $this->assertMoney('24.29', $priceInfo->vatAmount);
-        $this->assertFalse($priceInfo->priceFrom);
+        $this->assertFalse($priceInfo->isPriceFrom);
         $this->assertMoney('115.67', $priceInfo->basicPrice->getPriceWithoutVat());
         $this->assertMoney('139.96', $priceInfo->basicPrice->getPriceWithVat());
         $this->assertMoney('24.29', $priceInfo->basicPrice->getVatAmount());
@@ -350,7 +350,7 @@ final class ProductPriceQueryTest extends TransactionFunctionalTestCase
         $this->assertMoney($expectedVatAmount, $priceInfo->vatAmount);
         $this->assertSame($expectedPercentageDiscount, $priceInfo->percentageDiscount);
         $this->assertEquals(new DateTimeImmutable($expectedNextPriceChange), $priceInfo->nextPriceChange);
-        $this->assertTrue($priceInfo->priceFrom);
+        $this->assertTrue($priceInfo->isPriceFrom);
         $this->assertMoney('115.67', $priceInfo->basicPrice->getPriceWithoutVat());
         $this->assertMoney('139.96', $priceInfo->basicPrice->getPriceWithVat());
         $this->assertMoney('24.29', $priceInfo->basicPrice->getVatAmount());
