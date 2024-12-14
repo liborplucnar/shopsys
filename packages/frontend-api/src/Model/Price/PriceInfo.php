@@ -22,7 +22,7 @@ class PriceInfo
 
     public Price $basicPrice;
 
-    public bool $priceFrom;
+    public bool $isPriceFrom;
 
     /**
      * @param \Shopsys\FrameworkBundle\Model\Pricing\Price $price

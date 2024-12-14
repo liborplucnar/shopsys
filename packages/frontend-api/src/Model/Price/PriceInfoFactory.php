@@ -24,7 +24,7 @@ class PriceInfoFactory
     ): PriceInfo {
         $priceInfo = new PriceInfo();
         $priceInfo->basicPrice = $basicProductPrice;
-        $priceInfo->priceFrom = $basicProductPrice->isPriceFrom();
+        $priceInfo->isPriceFrom = $basicProductPrice->isPriceFrom();
 
         if ($specialPrice === null) {
             $priceInfo->setSellingPrice($basicProductPrice);
