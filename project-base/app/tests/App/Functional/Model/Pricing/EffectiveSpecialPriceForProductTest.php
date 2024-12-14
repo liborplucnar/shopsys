@@ -131,7 +131,7 @@ final class EffectiveSpecialPriceForProductTest extends TransactionFunctionalTes
      * @param string $priceListReferenceName
      * @param string $productPriceAmount
      */
-    public function addProductToPriceList(
+    private function addProductToPriceList(
         Product $product,
         string $priceListReferenceName,
         string $productPriceAmount,
