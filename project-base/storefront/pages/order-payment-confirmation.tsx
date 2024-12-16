@@ -8,6 +8,7 @@ import {
     getPaymentSessionExpiredErrorMessage,
     useUpdatePaymentStatus,
 } from 'components/Pages/Order/PaymentConfirmation/paymentConfirmationUtils';
+import { RegistrationAfterOrder } from 'components/Pages/OrderConfirmation/RegistrationAfterOrder';
 import { useOrderPaymentFailedContentQuery } from 'graphql/requests/orders/queries/OrderPaymentFailedContentQuery.generated';
 import { useOrderPaymentSuccessfulContentQuery } from 'graphql/requests/orders/queries/OrderPaymentSuccessfulContentQuery.generated';
 import useTranslation from 'next-translate/useTranslation';
@@ -19,7 +20,7 @@ import { initServerSideProps, ServerSidePropsType } from 'utils/serverSide/initS
 const OrderPaymentConfirmationPage: FC<ServerSidePropsType> = () => {
     const { t } = useTranslation();
 
-    const { orderIdentifier, orderPaymentStatusPageValidityHash } = useRouter().query;
+    const { orderIdentifier, orderPaymentStatusPageValidityHash, orderEmail, orderUrlHash } = useRouter().query;
     const orderUuid = getStringFromUrlQuery(orderIdentifier);
     const orderPaymentStatusPageValidityHashParam = getStringFromUrlQuery(orderPaymentStatusPageValidityHash);
     const paymentStatusData = useUpdatePaymentStatus(orderUuid, orderPaymentStatusPageValidityHashParam);
@@ -86,6 +87,11 @@ const OrderPaymentConfirmationPage: FC<ServerSidePropsType> = () => {
                                   }
                               />
                           )}
+                    <RegistrationAfterOrder
+                        orderEmail={orderEmail as string | undefined}
+                        orderUrlHash={orderUrlHash as string | undefined}
+                        orderUuid={orderUuid}
+                    />
                 </Webline>
             </CommonLayout>
         </>
@@ -93,6 +99,10 @@ const OrderPaymentConfirmationPage: FC<ServerSidePropsType> = () => {
 };
 
 export const getServerSideProps = getServerSidePropsWrapper(({ redisClient, domainConfig, t }) => async (context) => {
+    console.log(
+        '🚀 -> file: order-payment-confirmation.tsx:115 -> getServerSideProps -> context.query:',
+        context.query,
+    );
     const orderUuid = getStringFromUrlQuery(context.query.orderIdentifier);
 
     if (orderUuid === '') {
