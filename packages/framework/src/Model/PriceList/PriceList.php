@@ -86,7 +86,7 @@ class PriceList
         $this->validTo = $priceListData->validTo;
         $this->lastUpdate = new DateTimeImmutable();
 
-        // products with prices are not set here, they are set in the refreshProductWithPrices method
+        // products with prices are not set here, they are set in the PriceListFacade::refreshProductWithPrices method
         $this->productsWithPrices->clear();
     }
 
