@@ -37,11 +37,11 @@ class SpecialPriceApiFactory
 
         $effectiveSpecialPrice = $this->getEffectiveSpecialPrice($specialPricesArray);
 
-        if ($effectiveSpecialPrice === null || $effectiveSpecialPrice->price->getPriceWithVat()->isLessThan($basicPrice->getPriceWithVat())) {
-            return $effectiveSpecialPrice;
+        if ($effectiveSpecialPrice !== null && $effectiveSpecialPrice->price->getPriceWithVat()->isGreaterThanOrEqualTo($basicPrice->getPriceWithVat())) {
+            return null;
         }
 
-        return null;
+        return $effectiveSpecialPrice;
     }
 
     /**
