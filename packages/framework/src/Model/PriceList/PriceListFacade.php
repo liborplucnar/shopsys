@@ -89,7 +89,7 @@ class PriceListFacade
         PriceListData $priceListData,
         array $originalProductIds = [],
     ): void {
-        $originalProductIds = array_flip($originalProductIds);
+        $dispatchedProductIds = [];
 
         foreach ($priceListData->productsWithPrices as $productWithPriceData) {
             $productWithPrice = $this->productWithPriceFactory->create($productWithPriceData);
@@ -102,11 +102,13 @@ class PriceListFacade
                 [ProductExportScopeConfig::SCOPE_PRICE],
             );
 
-            unset($originalProductIds[$productWithPrice->getProduct()->getId()]);
+            $dispatchedProductIds[] = $productWithPrice->getProduct()->getId();
         }
 
+        $removedProductIds = array_diff($originalProductIds, $dispatchedProductIds);
+
         $this->productRecalculationDispatcher->dispatchProductIds(
-            array_keys($originalProductIds),
+            $removedProductIds,
             ProductRecalculationPriorityEnum::HIGH,
             [ProductExportScopeConfig::SCOPE_PRICE],
         );
