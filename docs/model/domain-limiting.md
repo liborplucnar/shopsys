@@ -19,7 +19,7 @@ In Shopsys Platform it's possible to limit the domain of the eshop from the two 
 ## Limit the demo data during the demo data installation
 
 If the demo data for the specific domain should be installed during the development build is determined by the `load_demo_data` parameter in the `domains.yaml` file.
-When the parameter is set to `true`, the demo data for the domain is installed.
+When the parameter is set to `true` (default value), the demo data for the domain is installed.
 
 !!! warning
 
