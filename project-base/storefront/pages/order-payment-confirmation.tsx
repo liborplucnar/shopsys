@@ -99,10 +99,6 @@ const OrderPaymentConfirmationPage: FC<ServerSidePropsType> = () => {
 };
 
 export const getServerSideProps = getServerSidePropsWrapper(({ redisClient, domainConfig, t }) => async (context) => {
-    console.log(
-        '🚀 -> file: order-payment-confirmation.tsx:115 -> getServerSideProps -> context.query:',
-        context.query,
-    );
     const orderUuid = getStringFromUrlQuery(context.query.orderIdentifier);
 
     if (orderUuid === '') {
