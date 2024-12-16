@@ -35,12 +35,12 @@ class PersonalDataAccessMailFacade
     public function sendMail(PersonalDataAccessRequest $personalDataAccessRequest): void
     {
         if ($personalDataAccessRequest->getType() === PersonalDataAccessRequest::TYPE_DISPLAY) {
-            $mailTemplate = $this->mailTemplateFacade->getWrappedWithGrapesBody(
+            $mailTemplate = $this->mailTemplateFacade->getWrappedWithGrapesJsBody(
                 MailTemplate::PERSONAL_DATA_ACCESS_NAME,
                 $personalDataAccessRequest->getDomainId(),
             );
         } else {
-            $mailTemplate = $this->mailTemplateFacade->getWrappedWithGrapesBody(
+            $mailTemplate = $this->mailTemplateFacade->getWrappedWithGrapesJsBody(
                 MailTemplate::PERSONAL_DATA_EXPORT_NAME,
                 $personalDataAccessRequest->getDomainId(),
             );

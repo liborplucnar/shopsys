@@ -40,7 +40,7 @@ class MailTemplateFacade
      * @param int $domainId
      * @return \Shopsys\FrameworkBundle\Model\Mail\MailTemplate
      */
-    public function getWrappedWithGrapesBody(string $templateName, int $domainId): MailTemplate
+    public function getWrappedWithGrapesJsBody(string $templateName, int $domainId): MailTemplate
     {
         $mailTemplate = $this->mailTemplateRepository->getByNameAndDomainId($templateName, $domainId);
 
