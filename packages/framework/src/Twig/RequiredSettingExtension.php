@@ -20,7 +20,6 @@ use Twig\TwigFunction;
 
 class RequiredSettingExtension extends AbstractExtension
 {
-
     /**
      * @var string[]
      */
