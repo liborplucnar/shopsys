@@ -610,7 +610,7 @@ final class ProductFormType extends AbstractType
         if ($product !== null) {
             $priceListOverviewOptionsByDomainId = [];
 
-            foreach ($this->domain->getAllIds() as $domainId) {
+            foreach ($this->domain->getAdminEnabledDomainIds() as $domainId) {
                 $priceListOverviewOptionsByDomainId[$domainId] = [
                     'specialPrices' => $this->specialPriceFacade->getCurrentAndFutureSpecialPrices($product, $domainId),
                 ];
