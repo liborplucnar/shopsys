@@ -20,6 +20,12 @@ use Twig\TwigFunction;
 
 class RequiredSettingExtension extends AbstractExtension
 {
+
+    /**
+     * @var string[]
+     */
+    protected array $requiredSettingsMessages = [];
+
     /**
      * @param \Twig\Environment $twig
      * @param \Symfony\Component\Routing\RouterInterface $router
@@ -60,35 +66,30 @@ class RequiredSettingExtension extends AbstractExtension
      */
     public function renderRequiredSettings(): ?string
     {
-        $requiredSettingsMessages = [];
+        $this->checkEnabledMailTemplatesHaveTheirBodyAndSubjectFilled();
+        $this->checkAtLeastOneUnitExists();
+        $this->checkDefaultUnitIsSet();
+        $this->checkAtLeastOneStockExists();
+        $this->checkAtLeastOneCountryExists();
+        $this->checkMandatoryArticlesExist();
+        $this->checkAllSliderNumericValuesAreSet();
 
-        $this->checkEnabledMailTemplatesHaveTheirBodyAndSubjectFilled($requiredSettingsMessages);
-        $this->checkAtLeastOneUnitExists($requiredSettingsMessages);
-        $this->checkDefaultUnitIsSet($requiredSettingsMessages);
-        $this->checkAtLeastOneWarehouseExists($requiredSettingsMessages);
-        $this->checkAtLeastOneCountryExists($requiredSettingsMessages);
-        $this->checkMandatoryArticlesExist($requiredSettingsMessages);
-        $this->checkAllSliderNumericValuesAreSet($requiredSettingsMessages);
-
-        if (count($requiredSettingsMessages) === 0) {
+        if (count($this->requiredSettingsMessages) === 0) {
             return null;
         }
 
         return $this->twig->render(
             '@ShopsysFramework/Components/RequiredSettings/requiredSettings.html.twig',
             [
-                'requiredSettingsMessages' => $requiredSettingsMessages,
+                'requiredSettingsMessages' => $this->requiredSettingsMessages,
             ],
         );
     }
 
-    /**
-     * @param string[] $warnings
-     */
-    protected function checkEnabledMailTemplatesHaveTheirBodyAndSubjectFilled(array &$warnings): void
+    protected function checkEnabledMailTemplatesHaveTheirBodyAndSubjectFilled(): void
     {
         if ($this->mailTemplateFacade->existsTemplateWithEnabledSendingHavingEmptyBodyOrSubject()) {
-            $warnings[] = t(
+            $this->requiredSettingsMessages[] = t(
                 '<a href="%url%">Some required email templates are not fully set.</a>',
                 [
                     '%url%' => $this->router->generate('admin_mail_template'),
@@ -97,13 +98,10 @@ class RequiredSettingExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param string[] $warnings
-     */
-    protected function checkAtLeastOneUnitExists(array &$warnings): void
+    protected function checkAtLeastOneUnitExists(): void
     {
         if ($this->unitFacade->getCount() === 0) {
-            $warnings[] = t(
+            $this->requiredSettingsMessages[] = t(
                 '<a href="%url%">There are no units, you need to create some.</a>',
                 [
                     '%url%' => $this->router->generate('admin_unit_list'),
@@ -112,15 +110,12 @@ class RequiredSettingExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param string[] $warnings
-     */
-    protected function checkDefaultUnitIsSet(array &$warnings): void
+    protected function checkDefaultUnitIsSet(): void
     {
         try {
             $this->unitFacade->getDefaultUnit();
         } catch (UnitNotFoundException) {
-            $warnings[] = t(
+            $this->requiredSettingsMessages[] = t(
                 '<a href="%url%">Default unit is not set.</a>',
                 [
                     '%url%' => $this->router->generate('admin_unit_list'),
@@ -129,13 +124,10 @@ class RequiredSettingExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param string[] $warnings
-     */
-    protected function checkAtLeastOneWarehouseExists(array &$warnings): void
+    protected function checkAtLeastOneStockExists(): void
     {
         if ($this->stockFacade->getCount() === 0) {
-            $warnings[] = t(
+            $this->requiredSettingsMessages[] = t(
                 '<a href="%url%">There are no warehouses, you need to create some.</a>',
                 [
                     '%url%' => $this->router->generate('admin_stock_list'),
@@ -144,13 +136,10 @@ class RequiredSettingExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param string[] $warnings
-     */
-    protected function checkAtLeastOneCountryExists(array &$warnings): void
+    protected function checkAtLeastOneCountryExists(): void
     {
         if ($this->countryFacade->getCount() === 0) {
-            $warnings[] = t(
+            $this->requiredSettingsMessages[] = t(
                 '<a href="%url%">There are no countries, you need to create some.</a>',
                 [
                     '%url%' => $this->router->generate('admin_country_list'),
@@ -159,16 +148,13 @@ class RequiredSettingExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param string[] $warnings
-     */
-    protected function checkMandatoryArticlesExist(array &$warnings): void
+    protected function checkMandatoryArticlesExist(): void
     {
         foreach ($this->domain->getAdminEnabledDomainIds() as $domainId) {
             $domainConfig = $this->domain->getDomainConfigById($domainId);
 
             if ($this->setting->getForDomain(Setting::TERMS_AND_CONDITIONS_ARTICLE_ID, $domainConfig->getId()) === null) {
-                $warnings[] = t(
+                $this->requiredSettingsMessages[] = t(
                     '<a href="%url%">Term and conditions article for domain %domainName% is not set.</a>',
                     [
                         '%url%' => $this->router->generate('admin_legalconditions_termsandconditions'),
@@ -178,7 +164,7 @@ class RequiredSettingExtension extends AbstractExtension
             }
 
             if ($this->setting->getForDomain(Setting::PRIVACY_POLICY_ARTICLE_ID, $domainConfig->getId()) === null) {
-                $warnings[] = t(
+                $this->requiredSettingsMessages[] = t(
                     '<a href="%url%">Privacy policy article for domain %domainName% is not set.</a>',
                     [
                         '%url%' => $this->router->generate('admin_legalconditions_privacypolicy'),
@@ -188,7 +174,7 @@ class RequiredSettingExtension extends AbstractExtension
             }
 
             if ($this->setting->getForDomain(Setting::USER_CONSENT_POLICY_ARTICLE_ID, $domainConfig->getId()) === null) {
-                $warnings[] = t(
+                $this->requiredSettingsMessages[] = t(
                     '<a href="%url%">User consent policy article for domain %domainName% is not set.</a>',
                     [
                         '%url%' => $this->router->generate('admin_userconsentpolicy_setting'),
@@ -199,10 +185,7 @@ class RequiredSettingExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param string[] $warnings
-     */
-    protected function checkAllSliderNumericValuesAreSet(array &$warnings): void
+    protected function checkAllSliderNumericValuesAreSet(): void
     {
         $countOfSliderParametersWithoutNumericValueSet = $this->parameterFacade->getCountOfSliderParametersWithoutTheirsNumericValueFilled();
 
@@ -210,7 +193,7 @@ class RequiredSettingExtension extends AbstractExtension
             return;
         }
 
-        $warning = t(
+        $message = t(
             '{1} There is one parameter slider that does not have its numeric values filled in.|[2,Inf] There are %count% parameter sliders that does not have its numeric values filled in.',
             [
                 '%count%' => $countOfSliderParametersWithoutNumericValueSet,
@@ -219,17 +202,17 @@ class RequiredSettingExtension extends AbstractExtension
 
         $sliderParametersWithoutTheirsNumericValueFilled = $this->parameterFacade->getSliderParametersWithoutTheirsNumericValueFilled();
 
-        $warning .= '<ul>';
+        $message .= '<ul>';
 
         foreach ($sliderParametersWithoutTheirsNumericValueFilled as $parameter) {
-            $warning .= sprintf(
+            $message .= sprintf(
                 '<li><a href="%s">%s</a></li>',
                 $this->router->generate('admin_parametervalues_edit', ['id' => $parameter->getId()]),
                 $parameter->getName(),
             );
         }
-        $warning .= '</ul>';
+        $message .= '</ul>';
 
-        $warnings[] = $warning;
+        $this->requiredSettingsMessages[] = $message;
     }
 }
