@@ -398,7 +398,7 @@ class CustomerPasswordChangeMailTemplateSender implements MailTemplateSenderInte
 }
 ```
 
-When the implementation is ready, "Send test mail" button will appear on the mail template detail page in the administration.
+When the implementation is finished, "Send test mail" button will appear on the mail template detail page in the administration.
 The administrator then can choose the email address to which the email should be sent and enter a customer user ID that will be used to fill in the mail variables from.
 
 You might notice that the email sending here is duplicated with the code we added to `CustomerPasswordController::setNewPasswordAction()`.
